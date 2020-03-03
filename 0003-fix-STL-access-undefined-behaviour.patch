@@ -1,0 +1,32 @@
+From 3077fbe2890704d5d2150985bf796af07af6c2d1 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?I=C3=B1aki=20=C3=9Acar?= <iucar@fedoraproject.org>
+Date: Sun, 16 Feb 2020 14:22:20 +0100
+Subject: [PATCH] fix STL access undefined behaviour
+
+---
+ src/cpp/session/modules/SessionFiles.cpp | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/cpp/session/modules/SessionFiles.cpp b/src/cpp/session/modules/SessionFiles.cpp
+index a509c10..11c8015 100644
+--- a/src/cpp/session/modules/SessionFiles.cpp
++++ b/src/cpp/session/modules/SessionFiles.cpp
+@@ -909,13 +909,13 @@ SEXP rs_readLines(SEXP filePathSEXP)
+       return r::sexp::create(contents, &protect);
+    
+    std::vector<std::string> splat = core::algorithm::split(contents, "\n");
+-   if (splat[splat.size() - 1].empty())
++   if (splat.size() && splat[splat.size() - 1].empty())
+       splat.pop_back();
+    
+    for (std::size_t i = 0, n = splat.size(); i < n; ++i)
+    {
+       std::string& rElement = splat[i];
+-      if (rElement[rElement.size() - 1] == '\r')
++      if (rElement.size() && rElement[rElement.size() - 1] == '\r')
+          rElement.erase(rElement.size() - 1);
+    }
+    
+-- 
+2.24.1
+
