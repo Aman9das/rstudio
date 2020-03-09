@@ -22,7 +22,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        10%{?dist}
+Release:        11%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, icomoon glyphs
@@ -54,11 +54,6 @@ BuildRequires:  pam-devel
 BuildRequires:  rapidxml-devel
 BuildRequires:  pkgconfig(uuid)
 BuildRequires:  pkgconfig(openssl)
-BuildRequires:  pkgconfig(pango)
-BuildRequires:  pkgconfig(libxslt)
-BuildRequires:  pkgconfig(gl)
-BuildRequires:  pkgconfig(libpq)
-BuildRequires:  pkgconfig(xscrnsaver)
 BuildRequires:  pkgconfig(websocketpp)
 %ifarch %{qt5_qtwebengine_arches}
 BuildRequires:  qt5-devel
@@ -287,6 +282,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Mon Mar  9 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-11
+- Cleanup some old dependencies
+
 * Fri Feb 28 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-10
 - Do not remove NOTICE from resources dir (displayed in the help menu)
 
