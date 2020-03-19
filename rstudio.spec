@@ -22,7 +22,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        11%{?dist}
+Release:        12%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, icomoon glyphs
@@ -282,6 +282,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Thu Mar 19 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-12
+- Add QT_QPA_PLATFORM=xcb to the desktop file to workaround Wayland issues
+
 * Mon Mar  9 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-11
 - Cleanup some old dependencies
 
