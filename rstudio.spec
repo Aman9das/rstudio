@@ -22,7 +22,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        12%{?dist}
+Release:        13%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, icomoon glyphs
@@ -56,7 +56,6 @@ BuildRequires:  pkgconfig(uuid)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(websocketpp)
 %ifarch %{qt5_qtwebengine_arches}
-BuildRequires:  qt5-devel
 BuildRequires:  pkgconfig(Qt5WebKit)
 BuildRequires:  pkgconfig(Qt5Location)
 BuildRequires:  pkgconfig(Qt5Sensors)
@@ -282,10 +281,13 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Mon Apr 06 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-13
+- Remove unneeded qt5-devel metapackage dependency
+
 * Thu Mar 19 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-12
 - Add QT_QPA_PLATFORM=xcb to the desktop file to workaround Wayland issues
 
-* Mon Mar  9 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-11
+* Mon Mar 09 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-11
 - Cleanup some old dependencies
 
 * Fri Feb 28 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-10
