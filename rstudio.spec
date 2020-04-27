@@ -8,6 +8,7 @@
 %global bundled_hunspell_version    1.3
 %global bundled_synctex_version     1.17
 %global bundled_datatables_version  1.10.4
+%global bundled_jquery_version      3.4.0
 %global bundled_pdfjs_version       1.3.158
 %global bundled_revealjs_version    2.4.0
 %global bundled_jsbn_version        2005
@@ -22,13 +23,13 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        13%{?dist}
+Release:        14%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, icomoon glyphs
 # ASL 2.0:      gwt, gwt-websockets, gin, guice, pdf.js
-# MIT:          synctex, json-spirit, sundown, datatables, reveal.js, jsbn,
-#               qunit.js, xterm.js
+# MIT:          synctex, json-spirit, sundown, datatables, jquery, reveal.js,
+#               jsbn, qunit.js, xterm.js
 # BSD:          highlight.js
 # Public:       aopalliance
 License:        AGPLv3 and ASL 2.0 and MIT and BSD and Public Domain
@@ -47,7 +48,7 @@ Patch3:         0003-fix-STL-access-undefined-behaviour.patch
 BuildRequires:  cmake, ant
 BuildRequires:  gcc-c++, java-devel, R-core-devel
 BuildRequires:  pandoc, pandoc-citeproc
-BuildRequires:  mathjax, js-jquery
+BuildRequires:  mathjax
 BuildRequires:  lato-fonts, glyphography-newscycle-fonts
 BuildRequires:  boost-devel
 BuildRequires:  pam-devel
@@ -73,7 +74,7 @@ BuildRequires:  systemd
 Requires(pre):  shadow-utils
 Requires:       hunspell
 Requires:       pandoc, pandoc-citeproc
-Requires:       mathjax, js-jquery
+Requires:       mathjax
 Requires:       lato-fonts, glyphography-newscycle-fonts
 Recommends:     git
 %ifarch %{qt5_qtwebengine_arches}
@@ -90,6 +91,7 @@ Provides:       bundled(sundown) = %{bundled_sundown_version}
 Provides:       bundled(hunspell) = %{bundled_hunspell_version}
 Provides:       bundled(synctex) = %{bundled_synctex_version}
 Provides:       bundled(js-datatables) = %{bundled_datatables_version}
+Provides:       bundled(js-jquery) = %{bundled_jquery_version}
 Provides:       bundled(js-pdf) = %{bundled_pdfjs_version}
 Provides:       bundled(js-reveal) = %{bundled_revealjs_version}
 Provides:       bundled(js-bn) = %{bundled_jsbn_version}
@@ -208,7 +210,6 @@ popd
 pushd %{buildroot}%{_libexecdir}/%{name}/resources
     ln -sf %{_datadir}/myspell dictionaries
     ln -sf %{_datadir}/javascript/mathjax mathjax-%{mathjax_short}
-    ln -sf %{_datadir}/javascript/jquery/latest/jquery.js grid/datatables/js/jquery.js
     pushd presentation/revealjs/fonts
         for fnt in Lato*.ttf; do
             ln -sf %{_datadir}/fonts/lato/${fnt} ${fnt}
@@ -281,6 +282,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Mon Apr 27 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-14
+- Use bundled jQuery before js-query is retired
+
 * Mon Apr 06 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-13
 - Remove unneeded qt5-devel metapackage dependency
 
