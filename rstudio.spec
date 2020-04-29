@@ -18,12 +18,12 @@
 %global mathjax_short               26
 %global rstudio_version_major       1
 %global rstudio_version_minor       2
-%global rstudio_version_patch       5033
-%global rstudio_git_revision_hash   330255ddec489e7a147ace3e8a9a3e4157d8d5ad
+%global rstudio_version_patch       5042
+%global rstudio_git_revision_hash   e4a1c219cbf6c10d9aec41461d80171ab3009bef
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        14%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, icomoon glyphs
@@ -44,6 +44,8 @@ Patch1:         0001-unbundle-qtsingleapplication.patch
 Patch2:         0002-fix-rstudio-exec-path.patch
 # https://github.com/rstudio/rstudio/pull/6244
 Patch3:         0003-fix-STL-access-undefined-behaviour.patch
+# https://github.com/rstudio/rstudio/pull/6017
+Patch4:         0004-fix-build-under-Rv4.0.patch
 
 BuildRequires:  cmake, ant
 BuildRequires:  gcc-c++, java-devel, R-core-devel
@@ -282,6 +284,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed Apr 29 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-1
+- Update to 1.2.5042, which adds support for R 4.0
+
 * Mon Apr 27 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5033-14
 - Use bundled jQuery before js-query is retired
 
