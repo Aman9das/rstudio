@@ -23,7 +23,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, icomoon glyphs
@@ -48,7 +48,7 @@ Patch3:         0003-fix-STL-access-undefined-behaviour.patch
 Patch4:         0004-fix-build-under-Rv4.0.patch
 
 BuildRequires:  cmake, ant
-BuildRequires:  gcc-c++, java-devel, R-core-devel
+BuildRequires:  gcc-c++, java-devel <= 1:1.8.0, R-core-devel
 BuildRequires:  pandoc, pandoc-citeproc
 BuildRequires:  mathjax
 BuildRequires:  lato-fonts, glyphography-newscycle-fonts
@@ -284,6 +284,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed May 06 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-2
+- Depend specifically on java-devel <= 1:1.8.0
+
 * Wed Apr 29 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-1
 - Update to 1.2.5042, which adds support for R 4.0
 
