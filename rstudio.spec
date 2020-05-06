@@ -48,7 +48,7 @@ Patch3:         0003-fix-STL-access-undefined-behaviour.patch
 Patch4:         0004-fix-build-under-Rv4.0.patch
 
 BuildRequires:  cmake, ant
-BuildRequires:  gcc-c++, java-devel <= 1:1.8.0, R-core-devel
+BuildRequires:  gcc-c++, java-1.8.0-openjdk-devel, R-core-devel
 BuildRequires:  pandoc, pandoc-citeproc
 BuildRequires:  mathjax
 BuildRequires:  lato-fonts, glyphography-newscycle-fonts
@@ -285,7 +285,7 @@ exit 0
 
 %changelog
 * Wed May 06 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-2
-- Depend specifically on java-devel <= 1:1.8.0
+- Depend specifically on java-1.8.0-openjdk-devel
 
 * Wed Apr 29 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-1
 - Update to 1.2.5042, which adds support for R 4.0
