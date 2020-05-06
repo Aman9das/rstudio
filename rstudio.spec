@@ -23,7 +23,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, icomoon glyphs
@@ -170,6 +170,7 @@ export GIT_COMMIT=%{rstudio_git_revision_hash}
     -DBOOST_ROOT=%{_prefix} -DBOOST_LIBRARYDIR=%{_lib} \
     -DCMAKE_INSTALL_PREFIX=%{_libexecdir}/%{name}
 %make_build # ALL
+export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
 %make_build gwt_build
 
 %install
@@ -284,8 +285,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
-* Wed May 06 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-2
+* Wed May 06 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-3
 - Depend specifically on java-1.8.0-openjdk-devel
+- Export JAVA_HOME to point to java-1.8.0
 
 * Wed Apr 29 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-1
 - Update to 1.2.5042, which adds support for R 4.0
