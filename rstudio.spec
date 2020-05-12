@@ -23,7 +23,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, icomoon glyphs
@@ -53,8 +53,10 @@ BuildRequires:  pandoc, pandoc-citeproc
 BuildRequires:  mathjax
 BuildRequires:  lato-fonts, glyphography-newscycle-fonts
 BuildRequires:  boost-devel
-BuildRequires:  pam-devel
 BuildRequires:  rapidxml-devel
+BuildRequires:  pam-devel
+BuildRequires:  systemd
+BuildRequires:  pkgconfig(systemd)
 BuildRequires:  pkgconfig(uuid)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(websocketpp)
@@ -69,20 +71,15 @@ BuildRequires:  pkgconfig(Qt5XmlPatterns)
 BuildRequires:  qtsingleapplication-qt5-devel
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  desktop-file-utils
+Suggests:       rstudio-desktop
 %endif
-BuildRequires:  pkgconfig(systemd)
-BuildRequires:  systemd
-%{?systemd_requires}
-Requires(pre):  shadow-utils
+Suggests:       rstudio-server
+Recommends:     git
 Requires:       hunspell
 Requires:       pandoc, pandoc-citeproc
 Requires:       mathjax
 Requires:       lato-fonts, glyphography-newscycle-fonts
-Recommends:     git
-%ifarch %{qt5_qtwebengine_arches}
-Suggests:       rstudio-desktop
-%endif
-Suggests:       rstudio-server
+
 Provides:       bundled(gwt) = %{bundled_gwt_version}
 Provides:       bundled(gwt-websockets) = %{bundled_websockets_version}
 Provides:       bundled(gin) = %{bundled_gin_version}
@@ -123,7 +120,8 @@ This package provides the Desktop version, to access the RStudio IDE locally.
 %package        server
 Summary:        Access RStudio via a web browser
 Requires:       %{name}%{?_isa} = %{version}-%{release}
-Requires:       pam
+Requires(pre):  shadow-utils
+%{?systemd_requires}
 
 %description    server %_description
 This package provides the Server version, a browser-based interface to the RStudio IDE.
@@ -260,7 +258,12 @@ exit 0
 %doc README.md
 %dir %{_libexecdir}/%{name}
 %{_libexecdir}/%{name}/R
-%{_libexecdir}/%{name}/bin
+%dir %{_libexecdir}/%{name}/bin
+%{_libexecdir}/%{name}/bin/pandoc
+%{_libexecdir}/%{name}/bin/postback
+%{_libexecdir}/%{name}/bin/r-ldpath
+%{_libexecdir}/%{name}/bin/rpostback
+%{_libexecdir}/%{name}/bin/rsession
 %{_libexecdir}/%{name}/resources
 %{_libexecdir}/%{name}/www
 %{_libexecdir}/%{name}/www-symbolmaps
@@ -269,6 +272,9 @@ exit 0
 %files desktop
 %{_bindir}/%{name}
 %{_libexecdir}/%{name}/%{name}.png
+%{_libexecdir}/%{name}/bin/diagnostics
+%{_libexecdir}/%{name}/bin/%{name}
+%{_libexecdir}/%{name}/bin/%{name}-backtrace.sh
 %{_datadir}/applications/%{name}.desktop
 %{_datadir}/icons/hicolor/*/apps/*
 %{_datadir}/icons/hicolor/*/mimetypes/*
@@ -280,11 +286,17 @@ exit 0
 %{_bindir}/%{name}-server
 %{_bindir}/rserver
 %{_bindir}/rserver-pam
+%{_libexecdir}/%{name}/bin/rserver
+%{_libexecdir}/%{name}/bin/rserver-pam
+%{_libexecdir}/%{name}/bin/%{name}-server
 %dir %{_sharedstatedir}/%{name}-server
 %{_unitdir}/%{name}-server.service
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Tue May 12 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-4
+- More granularity in file ownership under bin, sanitize requires
+
 * Wed May 06 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-3
 - Depend specifically on java-1.8.0-openjdk-devel
 - Export JAVA_HOME to point to java-1.8.0
