@@ -1,6 +1,6 @@
-From 080a23e9f2802692eb8f02a9d7532c554145b527 Mon Sep 17 00:00:00 2001
+From 2c0fb75409f38e149151f29f994ce513c18956ea Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?I=C3=B1aki=20=C3=9Acar?= <iucar@fedoraproject.org>
-Date: Thu, 20 Feb 2020 20:09:35 +0100
+Date: Sat, 30 May 2020 14:13:27 +0200
 Subject: [PATCH] unbundle qtsingleapplication
 
 ---
@@ -9,10 +9,10 @@ Subject: [PATCH] unbundle qtsingleapplication
  2 files changed, 3 insertions(+), 4 deletions(-)
 
 diff --git a/src/cpp/desktop/CMakeLists.txt b/src/cpp/desktop/CMakeLists.txt
-index dabe4f4..ec28567 100644
+index 8028a68..3b05e20 100644
 --- a/src/cpp/desktop/CMakeLists.txt
 +++ b/src/cpp/desktop/CMakeLists.txt
-@@ -158,7 +158,6 @@ endif (NOT WIN32)
+@@ -156,7 +156,6 @@ endif (NOT WIN32)
  
  set(MOC_DESKTOP_HEADER_FILES ${DESKTOP_HEADER_FILES})
  list(REMOVE_ITEM MOC_DESKTOP_HEADER_FILES
@@ -20,10 +20,10 @@ index dabe4f4..ec28567 100644
    ${CMAKE_CURRENT_SOURCE_DIR}/DesktopDetectRHome.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/DesktopOptions.hpp
    ${CMAKE_CURRENT_SOURCE_DIR}/DesktopRVersion.hpp
-@@ -224,8 +223,6 @@ set(DESKTOP_SOURCE_FILES
-   DesktopSlotBinders.cpp
-   DesktopSubMenu.cpp
+@@ -225,8 +224,6 @@ set(DESKTOP_SOURCE_FILES
    DesktopSynctex.cpp
+   DesktopJobLauncherOverlay.cpp
+   RemoteDesktopSessionLauncherOverlay.cpp
 -  3rdparty/qtsingleapplication/qtsingleapplication.cpp
 -  3rdparty/qtsingleapplication/qtlocalpeer.cpp
  )
@@ -36,8 +36,8 @@ index dabe4f4..ec28567 100644
 +      Qt5Solutions_SingleApplication-2.6
        ${Boost_LIBRARIES}
        rstudio-core
-       ${LINK_FLAGS}
-@@ -429,6 +427,7 @@ else()
+       ${CRASHPAD_LIBRARIES}
+@@ -430,6 +428,7 @@ else()
     target_link_libraries(RStudio
        ${RSTUDIO_QTMODULES}
        ${QT_LIBRARIES}
@@ -46,7 +46,7 @@ index dabe4f4..ec28567 100644
        ${APPLICATION_SERVICES_LIBRARY}
        ${COCOA_LIBRARY}
 diff --git a/src/cpp/desktop/DesktopPosixApplication.hpp b/src/cpp/desktop/DesktopPosixApplication.hpp
-index 03d09d9..ca2eaee 100644
+index b1cbe33..c83951d 100644
 --- a/src/cpp/desktop/DesktopPosixApplication.hpp
 +++ b/src/cpp/desktop/DesktopPosixApplication.hpp
 @@ -16,7 +16,7 @@
@@ -59,5 +59,5 @@ index 03d09d9..ca2eaee 100644
  #include "DesktopApplicationLaunch.hpp"
  
 -- 
-2.24.1
+2.25.2
 

@@ -1,12 +1,14 @@
-%global bundled_gwt_version         2.8.1
+%global bundled_gwt_version         2.8.2
 %global bundled_websockets_version  1.0.4
 %global bundled_gin_version         2.1.2
 %global bundled_guice_version       3.0
 %global bundled_aopalliance_version 1.0
-%global bundled_jsonspirit_version  4.03
+%global bundled_rapidjson_version   5cd62c2
 %global bundled_sundown_version     07d0d98
 %global bundled_hunspell_version    1.3
 %global bundled_synctex_version     1.17
+%global bundled_gsllite_version     0.34.0
+%global bundled_ace_version         1.4.5
 %global bundled_datatables_version  1.10.4
 %global bundled_jquery_version      3.4.0
 %global bundled_pdfjs_version       1.3.158
@@ -15,40 +17,35 @@
 %global bundled_highlightjs_version c589dcc
 %global bundled_qunitjs_version     1.18.0
 %global bundled_xtermjs_version     0.0.7
-%global mathjax_short               26
+%global mathjax_short               27
 %global rstudio_version_major       1
-%global rstudio_version_minor       2
-%global rstudio_version_patch       5042
-%global rstudio_git_revision_hash   e4a1c219cbf6c10d9aec41461d80171ab3009bef
+%global rstudio_version_minor       3
+%global rstudio_version_patch       959
+%global rstudio_git_revision_hash   3a09be39fd51a8fafa8ae330007937d31924b395
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        5%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, icomoon glyphs
-# ASL 2.0:      gwt, gwt-websockets, gin, guice, pdf.js
-# MIT:          synctex, json-spirit, sundown, datatables, jquery, reveal.js,
-#               jsbn, qunit.js, xterm.js
-# BSD:          highlight.js
+# ASL 2.0:      gwt, gwt-websockets, gin, guice, pdf.js, fast-text-encoding
+# MIT:          synctex, sundown, datatables, jquery, reveal.js, jsbn, qunit.js
+# MIT:          xterm.js, guidelines-support-library-lite
+# BSD:          ace, highlight.js
+# W3C:          inert-polyfill.js, focus-visible.js
 # Public:       aopalliance
-License:        AGPLv3 and ASL 2.0 and MIT and BSD and Public Domain
+License:        AGPLv3 and ASL 2.0 and MIT and BSD and W3C and Public Domain
 URL:            https://github.com/%{name}/%{name}
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
-Source1:        https://s3.amazonaws.com/%{name}-buildtools/gwt-%{bundled_gwt_version}.zip
-Source2:        https://s3.amazonaws.com/%{name}-buildtools/gin-%{bundled_gin_version}.zip
 # Unbundle mathjax, pandoc, hunspell dictionaries, qtsingleapplication
 Patch0:         0000-unbundle-dependencies-common.patch
 Patch1:         0001-unbundle-qtsingleapplication.patch
 # Remove the installation prefix from the exec path in the .desktop file
 Patch2:         0002-fix-rstudio-exec-path.patch
-# https://github.com/rstudio/rstudio/pull/6244
-Patch3:         0003-fix-STL-access-undefined-behaviour.patch
 # https://github.com/rstudio/rstudio/pull/6017
 Patch4:         0004-fix-build-under-Rv4.0.patch
-# Support for Boost > 1.69
-# https://github.com/rstudio/rstudio/pull/5353
-Patch5:         0005-boost-170-asio-service.patch
+# https://github.com/rstudio/rstudio/pull/7011
 Patch6:         0006-boost-173-global-placeholders.patch
 
 BuildRequires:  cmake, ant
@@ -89,10 +86,12 @@ Provides:       bundled(gwt-websockets) = %{bundled_websockets_version}
 Provides:       bundled(gin) = %{bundled_gin_version}
 Provides:       bundled(guice) = %{bundled_guice_version}
 Provides:       bundled(aopalliance) = %{bundled_aopalliance_version}
-Provides:       bundled(json-spirit) = %{bundled_jsonspirit_version}
+Provides:       bundled(rapidjson-devel) = %{bundled_rapidjson_version}
 Provides:       bundled(sundown) = %{bundled_sundown_version}
 Provides:       bundled(hunspell) = %{bundled_hunspell_version}
 Provides:       bundled(synctex) = %{bundled_synctex_version}
+Provides:       bundled(guidelines-support-library-lite-devel) = %{bundled_gsllite_version}
+Provides:       bundled(js-ace) = %{bundled_ace_version}
 Provides:       bundled(js-datatables) = %{bundled_datatables_version}
 Provides:       bundled(js-jquery) = %{bundled_jquery_version}
 Provides:       bundled(js-pdf) = %{bundled_pdfjs_version}
@@ -132,14 +131,6 @@ This package provides the Server version, a browser-based interface to the RStud
 
 %prep
 %autosetup -p1
-
-# unpack gwt
-mkdir -p src/gwt/lib/gwt
-unzip -q -d src/gwt/lib/gwt/ %{SOURCE1}
-mv src/gwt/lib/gwt/gwt-%{bundled_gwt_version} src/gwt/lib/gwt/%{bundled_gwt_version}
-# unpack gin
-mkdir -p src/gwt/lib/gin/%{bundled_gin_version}
-unzip -q -d src/gwt/lib/gin/%{bundled_gin_version} %{SOURCE2}
 
 # use system libraries when available
 rm -rf src/cpp/desktop/3rdparty src/cpp/ext/websocketpp
@@ -290,6 +281,7 @@ exit 0
 %{_bindir}/%{name}-server
 %{_bindir}/rserver
 %{_bindir}/rserver-pam
+%{_libexecdir}/%{name}/bin/crash-handler-proxy
 %{_libexecdir}/%{name}/bin/rserver
 %{_libexecdir}/%{name}/bin/rserver-pam
 %{_libexecdir}/%{name}/bin/%{name}-server
@@ -298,6 +290,16 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Sat May 30 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.959-1
+- Update to 1.3.959
+- Bump gwt version; gwt and gin are now included in the main source
+- Bump MathJax version (now matches the one shipped in Fedora)
+- Provide bundled rapidjson (devel version, not in Fedora); drop json-spirit
+- Provide bundled guidelines-support-library-lite
+- Provide bundled Ace (it was present before, but missing in Provides)
+- Drop patches already merged upstream; rebase other patches
+- Add new binary crash-handler-proxy to rstudio-server
+
 * Sat May 30 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-5
 - Fix compatibility with boost 1.73
 

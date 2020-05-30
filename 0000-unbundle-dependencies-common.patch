@@ -1,14 +1,14 @@
-From dc5d9b6c5fc48853fa22d12d116caaee5676a2ba Mon Sep 17 00:00:00 2001
+From 3c9f189a672453f32b57b94687ae4eec77f43781 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?I=C3=B1aki=20=C3=9Acar?= <iucar@fedoraproject.org>
-Date: Thu, 20 Feb 2020 18:22:09 +0100
-Subject: [PATCH] unbundle dependencies/common
+Date: Sat, 30 May 2020 14:09:30 +0200
+Subject: [PATCH] unbundle dependencies common
 
 ---
- src/cpp/session/CMakeLists.txt | 33 ---------------------------------
- 1 file changed, 33 deletions(-)
+ src/cpp/session/CMakeLists.txt | 29 -----------------------------
+ 1 file changed, 29 deletions(-)
 
 diff --git a/src/cpp/session/CMakeLists.txt b/src/cpp/session/CMakeLists.txt
-index 1fd7718..8ab972c 100644
+index 8f0daa5..628d968 100644
 --- a/src/cpp/session/CMakeLists.txt
 +++ b/src/cpp/session/CMakeLists.txt
 @@ -17,18 +17,6 @@ project (SESSION)
@@ -20,17 +20,17 @@ index 1fd7718..8ab972c 100644
 -if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/dictionaries")
 -  message(FATAL_ERROR "Dictionaries not found (re-run install-dependencies script to install)")
 -endif()
--if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax-26")
--  message(FATAL_ERROR "Mathjax 2.6 not found (re-run install-dependencies script to install)")
+-if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax-27")
+-  message(FATAL_ERROR "Mathjax 2.7 not found (re-run install-dependencies script to install)")
 -endif()
 -if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/pandoc")
 -  message(FATAL_ERROR "pandoc not found (re-run install-dependencies script to install)")
 -endif()
 -
- # we often install embedded versions of these packages but don't do so currently
- 
- # if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/rmarkdown")
-@@ -478,31 +466,10 @@ if (NOT RSTUDIO_SESSION_WIN32)
+ # verify embedded packages are available
+ foreach(PKG ${RSTUDIO_EMBEDDED_PACKAGES})
+    file(GLOB PKG_FILES "${RSTUDIO_DEPENDENCIES_DIR}/common/${PKG}*.tar.gz")
+@@ -496,14 +484,6 @@ if (NOT RSTUDIO_SESSION_WIN32)
     install(FILES ${R_MODULE_SRC_FILES}
             DESTINATION ${RSTUDIO_INSTALL_SUPPORTING}/R/modules)
  
@@ -39,19 +39,18 @@ index 1fd7718..8ab972c 100644
 -           DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
 -
 -   # install mathjax for local html preview
--   install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax-26"
+-   install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax-27"
 -           DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
 -
     # icons for database connections
     install(DIRECTORY "resources/connections"
             DESTINATION ${RSTUDIO_INSTALL_SUPPORTING}/resources)
+@@ -516,15 +496,6 @@ if (NOT RSTUDIO_SESSION_WIN32)
+    install(DIRECTORY "resources/dependencies"
+            DESTINATION ${RSTUDIO_INSTALL_SUPPORTING}/resources)
  
 -   # install pandoc
--   if(WIN32)
--      set(PANDOC_VERSION "2.7.2" CACHE INTERNAL "Pandoc version")
--   else()
--      set(PANDOC_VERSION "2.3.1" CACHE INTERNAL "Pandoc version")
--   endif()
+-   set(PANDOC_VERSION "2.7.3" CACHE INTERNAL "Pandoc version")
 -
 -   set(PANDOC_BIN "${RSTUDIO_DEPENDENCIES_DIR}/common/pandoc/${PANDOC_VERSION}")
 -   file(GLOB PANDOC_FILES "${PANDOC_BIN}/pandoc*")
@@ -59,9 +58,9 @@ index 1fd7718..8ab972c 100644
 -           PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
 -           DESTINATION  ${RSTUDIO_INSTALL_BIN}/pandoc)
 -
-    # install rmarkdown package
-    # file(GLOB RMARKDOWN_PACKAGE "${RSTUDIO_DEPENDENCIES_DIR}/common/rmarkdown*.tar.gz")
-    # install(FILES ${RMARKDOWN_PACKAGE}
+    # install embedded packages
+    foreach(PKG ${RSTUDIO_EMBEDDED_PACKAGES})
+       file(GLOB PKG_FILES "${RSTUDIO_DEPENDENCIES_DIR}/common/${PKG}*.tar.gz")
 -- 
-2.24.1
+2.25.2
 
