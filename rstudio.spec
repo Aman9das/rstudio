@@ -23,7 +23,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, icomoon glyphs
@@ -46,6 +46,10 @@ Patch2:         0002-fix-rstudio-exec-path.patch
 Patch3:         0003-fix-STL-access-undefined-behaviour.patch
 # https://github.com/rstudio/rstudio/pull/6017
 Patch4:         0004-fix-build-under-Rv4.0.patch
+# Support for Boost > 1.69
+# https://github.com/rstudio/rstudio/pull/5353
+Patch5:         0005-boost-170-asio-service.patch
+Patch6:         0006-boost-173-global-placeholders.patch
 
 BuildRequires:  cmake, ant
 BuildRequires:  gcc-c++, java-1.8.0-openjdk-devel, R-core-devel
@@ -294,6 +298,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Sat May 30 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-5
+- Fix compatibility with boost 1.73
+
 * Tue May 12 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.2.5042-4
 - More granularity in file ownership under bin, sanitize requires
 
