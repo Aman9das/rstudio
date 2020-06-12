@@ -4,7 +4,8 @@
 %global bundled_guice_version       3.0
 %global bundled_aopalliance_version 1.0
 %global bundled_rapidjson_version   5cd62c2
-%global bundled_sundown_version     07d0d98
+%global bundled_treehh_version      2.81
+%global bundled_sundown_version     1.16.0
 %global bundled_hunspell_version    1.3
 %global bundled_synctex_version     1.17
 %global bundled_gsllite_version     0.34.0
@@ -13,10 +14,12 @@
 %global bundled_jquery_version      3.4.0
 %global bundled_pdfjs_version       1.3.158
 %global bundled_revealjs_version    2.4.0
-%global bundled_jsbn_version        2005
+%global bundled_jsbn_version        1.1
 %global bundled_highlightjs_version c589dcc
 %global bundled_qunitjs_version     1.18.0
-%global bundled_xtermjs_version     0.0.7
+%global bundled_xtermjs_version     3.14.5
+%global bundled_inertpol_version    0.2.5
+%global bundled_focusvis_version    5.0.2
 %global mathjax_short               27
 %global rstudio_version_major       1
 %global rstudio_version_minor       3
@@ -25,17 +28,22 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
 
-# AGPLv3:       RStudio, hunspell, icomoon glyphs
+# AGPLv3:       RStudio, hunspell, tree.hh
 # ASL 2.0:      gwt, gwt-websockets, gin, guice, pdf.js, fast-text-encoding
-# MIT:          synctex, sundown, datatables, jquery, reveal.js, jsbn, qunit.js
+# ASL 2.0:      inert-polyfill.js
+# MIT:          synctex, datatables, jquery, reveal.js, qunit.js
 # MIT:          xterm.js, guidelines-support-library-lite
-# BSD:          ace, highlight.js
-# W3C:          inert-polyfill.js, focus-visible.js
+# BSD:          jsbn, ace, highlight.js
+# ISC:          sundown
+# W3C:          focus-visible.js
+# MPLv1.1:      rhino
+# CPL           JUnit
+# OFL:          a few fontawesome glyphs
 # Public:       aopalliance
-License:        AGPLv3 and ASL 2.0 and MIT and BSD and W3C and Public Domain
+License:        AGPLv3 and ASL 2.0 and MIT and BSD and ISC and W3C and MPLv1.1 and CPL and OFL and Public Domain
 URL:            https://github.com/%{name}/%{name}
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 # Unbundle mathjax, pandoc, hunspell dictionaries, qtsingleapplication
@@ -76,6 +84,7 @@ Suggests:       rstudio-desktop
 %endif
 Suggests:       rstudio-server
 Recommends:     git
+Recommends:     R-rmarkdown
 Requires:       hunspell
 Requires:       pandoc, pandoc-citeproc
 Requires:       mathjax
@@ -87,6 +96,7 @@ Provides:       bundled(gin) = %{bundled_gin_version}
 Provides:       bundled(guice) = %{bundled_guice_version}
 Provides:       bundled(aopalliance) = %{bundled_aopalliance_version}
 Provides:       bundled(rapidjson-devel) = %{bundled_rapidjson_version}
+Provides:       bundled(tree-hh-devel) = %{bundled_treehh_version}
 Provides:       bundled(sundown) = %{bundled_sundown_version}
 Provides:       bundled(hunspell) = %{bundled_hunspell_version}
 Provides:       bundled(synctex) = %{bundled_synctex_version}
@@ -100,6 +110,8 @@ Provides:       bundled(js-bn) = %{bundled_jsbn_version}
 Provides:       bundled(js-highlight) = %{bundled_highlightjs_version}
 Provides:       bundled(js-qunit) = %{bundled_qunitjs_version}
 Provides:       bundled(js-xterm) = %{bundled_xtermjs_version}
+Provides:       bundled(js-inert-polyfill) = %{bundled_inertpol_version}
+Provides:       bundled(js-focus-visible) = %{bundled_focusvis_version}
 
 %global _description %{expand:
 RStudio is an integrated development environment (IDE) for R. It includes a
@@ -290,6 +302,10 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Fri Jun 12 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.959-2
+- Add R-rmarkdown to Recommends
+- Fix some bundled versions and licenses
+
 * Sat May 30 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.959-1
 - Update to 1.3.959
 - Bump gwt version; gwt and gin are now included in the main source
