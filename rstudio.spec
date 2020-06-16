@@ -41,9 +41,9 @@ Summary:        RStudio base package
 # W3C:          focus-visible.js
 # MPLv1.1:      rhino
 # CPL           JUnit
-# OFL:          a few fontawesome glyphs
+# CC-BY:        a few icomoon glyphs
 # Public:       aopalliance
-License:        AGPLv3 and ASL 2.0 and MIT and BSD and ISC and W3C and MPLv1.1 and CPL and OFL and Public Domain
+License:        AGPLv3 and ASL 2.0 and MIT and BSD and ISC and W3C and MPLv1.1 and CPL and CC-BY and Public Domain
 URL:            https://github.com/%{name}/%{name}
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 # Unbundle mathjax, pandoc, hunspell dictionaries, qtsingleapplication
@@ -302,7 +302,7 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
-* Fri Jun 12 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.959-2
+* Tue Jun 16 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.959-2
 - Add R-rmarkdown to Recommends
 - Fix some bundled versions and licenses
 
