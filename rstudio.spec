@@ -162,6 +162,7 @@ export RSTUDIO_VERSION_MINOR=%{rstudio_version_minor}
 export RSTUDIO_VERSION_PATCH=%{rstudio_version_patch}
 export RSTUDIO_GIT_REVISION_HASH=%{rstudio_git_revision_hash}
 export GIT_COMMIT=%{rstudio_git_revision_hash}
+export PACKAGE_OS=$(cat /etc/redhat-release)
 %cmake . \
 %ifarch %{qt5_qtwebengine_arches}
     -DRSTUDIO_TARGET=Desktop \
@@ -302,6 +303,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Fri Jun 19 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.959-3
+- Set PACKAGE_OS env variable
+
 * Tue Jun 16 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.959-2
 - Add R-rmarkdown to Recommends
 - Fix some bundled versions and licenses
