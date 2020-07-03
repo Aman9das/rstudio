@@ -28,7 +28,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -163,7 +163,7 @@ export RSTUDIO_VERSION_PATCH=%{rstudio_version_patch}
 export RSTUDIO_GIT_REVISION_HASH=%{rstudio_git_revision_hash}
 export GIT_COMMIT=%{rstudio_git_revision_hash}
 export PACKAGE_OS=$(cat /etc/redhat-release)
-%cmake . \
+%cmake -B build \
 %ifarch %{qt5_qtwebengine_arches}
     -DRSTUDIO_TARGET=Desktop \
     -DRSTUDIO_SERVER=TRUE \
@@ -175,12 +175,12 @@ export PACKAGE_OS=$(cat /etc/redhat-release)
     -DRSTUDIO_USE_SYSTEM_BOOST=Yes \
     -DBOOST_ROOT=%{_prefix} -DBOOST_LIBRARYDIR=%{_lib} \
     -DCMAKE_INSTALL_PREFIX=%{_libexecdir}/%{name}
-%make_build # ALL
+%make_build -C build # ALL
 export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
-%make_build gwt_build
+%make_build -C build gwt_build
 
 %install
-%make_install
+%make_install -C build
 # expose symlinks in /usr/bin
 install -d -m 0755 %{buildroot}%{_bindir}
 %ifarch %{qt5_qtwebengine_arches}
@@ -303,8 +303,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
-* Fri Jun 19 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.959-3
+* Fri Jul 03 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.959-3
 - Set PACKAGE_OS env variable
+- Move to out-of-source build
 
 * Tue Jun 16 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.959-2
 - Add R-rmarkdown to Recommends
