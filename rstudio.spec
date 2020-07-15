@@ -23,12 +23,12 @@
 %global mathjax_short               27
 %global rstudio_version_major       1
 %global rstudio_version_minor       3
-%global rstudio_version_patch       959
-%global rstudio_git_revision_hash   3a09be39fd51a8fafa8ae330007937d31924b395
+%global rstudio_version_patch       1056
+%global rstudio_git_revision_hash   5a4dee980c998d9a270a83b582b367126f3914cf
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        4%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -51,8 +51,6 @@ Patch0:         0000-unbundle-dependencies-common.patch
 Patch1:         0001-unbundle-qtsingleapplication.patch
 # Remove the installation prefix from the exec path in the .desktop file
 Patch2:         0002-fix-rstudio-exec-path.patch
-# https://github.com/rstudio/rstudio/pull/6017
-Patch4:         0004-fix-build-under-Rv4.0.patch
 # https://github.com/rstudio/rstudio/pull/7011
 Patch6:         0006-boost-173-global-placeholders.patch
 
@@ -303,6 +301,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed Jul 15 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.1056-1
+- Update to 1.3.1056
+
 * Sat Jul 11 2020 Jiri Vanek <jvanek@redhat.com> - 1.3.959-4
 - Rebuilt for JDK-11, see https://fedoraproject.org/wiki/Changes/Java11
 
