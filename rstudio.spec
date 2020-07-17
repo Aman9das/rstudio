@@ -28,7 +28,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -301,6 +301,10 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Fri Jul 17 2020 Jiri Vanek <jvanek@redhat.com> - 1.3.1056-2
+- Rebuilt for JDK-11, attempt 2. see
+  https://fedoraproject.org/wiki/Changes/Java11
+
 * Wed Jul 15 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.1056-1
 - Update to 1.3.1056
 
