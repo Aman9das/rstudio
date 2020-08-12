@@ -23,12 +23,12 @@
 %global mathjax_short               27
 %global rstudio_version_major       1
 %global rstudio_version_minor       3
-%global rstudio_version_patch       1056
-%global rstudio_git_revision_hash   5a4dee980c998d9a270a83b582b367126f3914cf
+%global rstudio_version_patch       1073
+%global rstudio_git_revision_hash   718e6d75b094658d999495534badf55fb2ce0047
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        4%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -301,6 +301,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed Aug 12 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.1073-1
+- Update to 1.3.1073
+
 * Sat Aug 01 2020 Fedora Release Engineering <releng@fedoraproject.org> - 1.3.1056-4
 - Second attempt - Rebuilt for
   https://fedoraproject.org/wiki/Fedora_33_Mass_Rebuild
