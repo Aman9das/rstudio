@@ -23,8 +23,8 @@
 %global mathjax_short               27
 %global rstudio_version_major       1
 %global rstudio_version_minor       3
-%global rstudio_version_patch       1073
-%global rstudio_git_revision_hash   718e6d75b094658d999495534badf55fb2ce0047
+%global rstudio_version_patch       1093
+%global rstudio_git_revision_hash   aee44535570639672cf61c0545113e7a62c90b5b
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
@@ -301,6 +301,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Sat Sep 19 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.1093-1
+- Update to 1.3.1093
+
 * Wed Aug 12 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.1073-1
 - Update to 1.3.1073
 
