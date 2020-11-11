@@ -28,7 +28,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -51,8 +51,10 @@ Patch0:         0000-unbundle-dependencies-common.patch
 Patch1:         0001-unbundle-qtsingleapplication.patch
 # Remove the installation prefix from the exec path in the .desktop file
 Patch2:         0002-fix-rstudio-exec-path.patch
+# We don't want to set RSTUDIO_PACKAGE_BUILD
+Patch3:         0003-fix-resources-path.patch
 # https://github.com/rstudio/rstudio/pull/7011
-Patch6:         0006-boost-173-global-placeholders.patch
+Patch4:         0004-boost-173-global-placeholders.patch
 
 BuildRequires:  cmake, ant
 BuildRequires:  gcc-c++, java-1.8.0-openjdk-devel, R-core-devel
@@ -301,6 +303,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed Nov 11 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.1093-2
+- Fix resources path for release build without RSTUDIO_PACKAGE_BUILD set
+
 * Sat Sep 19 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.1093-1
 - Update to 1.3.1093
 
