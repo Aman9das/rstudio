@@ -28,7 +28,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -56,7 +56,7 @@ Patch3:         0003-fix-resources-path.patch
 # https://github.com/rstudio/rstudio/pull/7011
 Patch4:         0004-boost-173-global-placeholders.patch
 
-BuildRequires:  cmake, ant
+BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-1.8.0-openjdk-devel, R-core-devel
 BuildRequires:  pandoc, pandoc-citeproc
 BuildRequires:  mathjax
@@ -303,6 +303,9 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Mon Nov 30 2020 Iñaki Úcar <iucar@fedoraproject.org> 1.3.1093-3
+- https://fedoraproject.org/wiki/Changes/Remove_make_from_BuildRoot
+
 * Wed Nov 11 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.1093-2
 - Fix resources path for release build without RSTUDIO_PACKAGE_BUILD set
 
