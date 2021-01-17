@@ -1,7 +1,10 @@
 %global bundled_gwt_version         2.8.2
 %global bundled_websockets_version  1.0.4
 %global bundled_gin_version         2.1.2
+%global bundled_elemental2_version  1.0.0
+%global bundled_junit_version       4.9b3
 %global bundled_guice_version       3.0
+%global bundled_corejs_version      3.6.4
 %global bundled_aopalliance_version 1.0
 %global bundled_rapidjson_version   5cd62c2
 %global bundled_treehh_version      2.81
@@ -21,31 +24,38 @@
 %global bundled_inertpol_version    0.2.5
 %global bundled_focusvis_version    5.0.2
 %global mathjax_short               27
+%global rstudio_visual_editor       panmirror-0.1.0
 %global rstudio_version_major       1
-%global rstudio_version_minor       3
-%global rstudio_version_patch       1093
-%global rstudio_git_revision_hash   aee44535570639672cf61c0545113e7a62c90b5b
+%global rstudio_version_minor       4
+%global rstudio_version_patch       1103
+%global rstudio_git_revision_hash   458706c38764ec79d06ef1214acf07af87ef5795
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
+# LGPLv2+:      Stan Ace Mode
 # ASL 2.0:      gwt, gwt-websockets, gin, guice, pdf.js, fast-text-encoding
-# ASL 2.0:      inert-polyfill.js
-# MIT:          synctex, datatables, jquery, reveal.js, qunit.js
-# MIT:          xterm.js, guidelines-support-library-lite
+# ASL 2.0:      inert-polyfill.js, elemental2
+# MIT:          synctex, datatables, jquery, reveal.js, qunit.js, core-js
+# MIT:          xterm.js, guidelines-support-library-lite, JSCustomBadge
+# MIT:          ansi-regex, gsl-lite, ProseMirror, CodeMirror, OrderedMap
+# MIT:          Clipboard.js, tlite
 # BSD:          jsbn, ace, highlight.js
 # ISC:          sundown
 # W3C:          focus-visible.js
 # MPLv1.1:      rhino
-# CPL           JUnit
+# CPL:          JUnit
 # CC-BY:        a few icomoon glyphs
 # Public:       aopalliance
-License:        AGPLv3 and ASL 2.0 and MIT and BSD and ISC and W3C and MPLv1.1 and CPL and CC-BY and Public Domain
+License:        AGPLv3 and LGPLv2+ and ASL 2.0 and MIT and BSD and ISC and W3C and MPLv1.1 and CPL and CC-BY and Public Domain
 URL:            https://github.com/%{name}/%{name}
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+# Node dependencies to build visual editor (use nodejs-bundler.sh)
+Source1:        %{rstudio_visual_editor}-nm.tgz
+Source2:        %{rstudio_visual_editor}-bundled-licenses.txt
 # Unbundle mathjax, pandoc, hunspell dictionaries, qtsingleapplication
 Patch0:         0000-unbundle-dependencies-common.patch
 Patch1:         0001-unbundle-qtsingleapplication.patch
@@ -53,15 +63,17 @@ Patch1:         0001-unbundle-qtsingleapplication.patch
 Patch2:         0002-fix-rstudio-exec-path.patch
 # We don't want to set RSTUDIO_PACKAGE_BUILD
 Patch3:         0003-fix-resources-path.patch
-# https://github.com/rstudio/rstudio/pull/7011
-Patch4:         0004-boost-173-global-placeholders.patch
+# Use system-provided nodejs binary
+Patch4:         0004-use-system-node.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-1.8.0-openjdk-devel, R-core-devel
+BuildRequires:  nodejs-devel
 BuildRequires:  pandoc, pandoc-citeproc
 BuildRequires:  mathjax
 BuildRequires:  lato-fonts, glyphography-newscycle-fonts
 BuildRequires:  boost-devel
+BuildRequires:  soci-postgresql-devel, soci-sqlite3-devel
 BuildRequires:  rapidxml-devel
 BuildRequires:  pam-devel
 BuildRequires:  systemd
@@ -84,7 +96,6 @@ Suggests:       rstudio-desktop
 %endif
 Suggests:       rstudio-server
 Recommends:     git
-Recommends:     R-rmarkdown
 Requires:       hunspell
 Requires:       pandoc, pandoc-citeproc
 Requires:       mathjax
@@ -93,7 +104,10 @@ Requires:       lato-fonts, glyphography-newscycle-fonts
 Provides:       bundled(gwt) = %{bundled_gwt_version}
 Provides:       bundled(gwt-websockets) = %{bundled_websockets_version}
 Provides:       bundled(gin) = %{bundled_gin_version}
+Provides:       bundled(elemental2) = %{bundled_elemental2_version}
+Provides:       bundled(jnit) = %{bundled_junit_version}
 Provides:       bundled(guice) = %{bundled_guice_version}
+Provides:       bundled(nodejs-core-js) = %{bundled_corejs_version}
 Provides:       bundled(aopalliance) = %{bundled_aopalliance_version}
 Provides:       bundled(rapidjson-devel) = %{bundled_rapidjson_version}
 Provides:       bundled(tree-hh-devel) = %{bundled_treehh_version}
@@ -143,6 +157,11 @@ This package provides the Server version, a browser-based interface to the RStud
 
 %prep
 %autosetup -p1
+tar -xf %{SOURCE1}
+mkdir src/gwt/panmirror/src/editor/node_modules
+cp -r node_modules_prod/* src/gwt/panmirror/src/editor/node_modules
+cp -r node_modules_dev/* src/gwt/panmirror/src/editor/node_modules
+cp %{SOURCE2} .
 
 # use system libraries when available
 rm -rf src/cpp/desktop/3rdparty src/cpp/ext/websocketpp
@@ -172,6 +191,7 @@ export PACKAGE_OS=$(cat /etc/redhat-release)
     -DRSTUDIO_TARGET=Server \
 %endif
     -DCMAKE_BUILD_TYPE=Release \
+    -DRSTUDIO_USE_SYSTEM_SOCI=Yes \
     -DRSTUDIO_USE_SYSTEM_BOOST=Yes \
     -DBOOST_ROOT=%{_prefix} -DBOOST_LIBRARYDIR=%{_lib} \
     -DCMAKE_INSTALL_PREFIX=%{_libexecdir}/%{name}
@@ -262,7 +282,7 @@ exit 0
 %systemd_postun_with_restart %{name}-server.service
 
 %files
-%license COPYING NOTICE
+%license COPYING NOTICE %{rstudio_visual_editor}-bundled-licenses.txt
 %doc README.md
 %dir %{_libexecdir}/%{name}
 %{_libexecdir}/%{name}/R
@@ -298,11 +318,16 @@ exit 0
 %{_libexecdir}/%{name}/bin/rserver
 %{_libexecdir}/%{name}/bin/rserver-pam
 %{_libexecdir}/%{name}/bin/%{name}-server
+%dir %{_libexecdir}/%{name}/db
+%{_libexecdir}/%{name}/db/20200226141952248123456_AddRevokedCookie.sql
 %dir %{_sharedstatedir}/%{name}-server
 %{_unitdir}/%{name}-server.service
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Sat Jan 16 2021 Iñaki Úcar <iucar@fedoraproject.org> - 1.4.1103-1
+- Update to 1.4.1103
+
 * Mon Nov 30 2020 Iñaki Úcar <iucar@fedoraproject.org> 1.3.1093-3
 - https://fedoraproject.org/wiki/Changes/Remove_make_from_BuildRoot
 

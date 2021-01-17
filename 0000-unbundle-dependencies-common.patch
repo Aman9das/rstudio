@@ -1,17 +1,17 @@
-From 3c9f189a672453f32b57b94687ae4eec77f43781 Mon Sep 17 00:00:00 2001
+From 49d4abc2263fc8d962ece4b4e4b020da20631ae9 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?I=C3=B1aki=20=C3=9Acar?= <iucar@fedoraproject.org>
-Date: Sat, 30 May 2020 14:09:30 +0200
+Date: Sat, 16 Jan 2021 15:16:19 +0100
 Subject: [PATCH] unbundle dependencies common
 
 ---
- src/cpp/session/CMakeLists.txt | 29 -----------------------------
- 1 file changed, 29 deletions(-)
+ src/cpp/session/CMakeLists.txt | 28 ----------------------------
+ 1 file changed, 28 deletions(-)
 
 diff --git a/src/cpp/session/CMakeLists.txt b/src/cpp/session/CMakeLists.txt
-index 8f0daa5..628d968 100644
+index 9b6017f..d1f3b3b 100644
 --- a/src/cpp/session/CMakeLists.txt
 +++ b/src/cpp/session/CMakeLists.txt
-@@ -17,18 +17,6 @@ project (SESSION)
+@@ -17,19 +17,6 @@ project (SESSION)
  
  add_subdirectory(workers)
  
@@ -23,14 +23,15 @@ index 8f0daa5..628d968 100644
 -if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax-27")
 -  message(FATAL_ERROR "Mathjax 2.7 not found (re-run install-dependencies script to install)")
 -endif()
--if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/pandoc")
--  message(FATAL_ERROR "pandoc not found (re-run install-dependencies script to install)")
+-set(PANDOC_VERSION "2.11.2" CACHE INTERNAL "Pandoc version")
+-if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/pandoc/${PANDOC_VERSION}")
+-  message(FATAL_ERROR "pandoc ${PANDOC_VERSION} not found (re-run install-dependencies script to install)")
 -endif()
 -
  # verify embedded packages are available
  foreach(PKG ${RSTUDIO_EMBEDDED_PACKAGES})
     file(GLOB PKG_FILES "${RSTUDIO_DEPENDENCIES_DIR}/common/${PKG}*.tar.gz")
-@@ -496,14 +484,6 @@ if (NOT RSTUDIO_SESSION_WIN32)
+@@ -530,14 +517,6 @@ if (NOT RSTUDIO_SESSION_WIN32)
     install(FILES ${R_MODULE_SRC_FILES}
             DESTINATION ${RSTUDIO_INSTALL_SUPPORTING}/R/modules)
  
@@ -45,13 +46,11 @@ index 8f0daa5..628d968 100644
     # icons for database connections
     install(DIRECTORY "resources/connections"
             DESTINATION ${RSTUDIO_INSTALL_SUPPORTING}/resources)
-@@ -516,15 +496,6 @@ if (NOT RSTUDIO_SESSION_WIN32)
+@@ -550,13 +529,6 @@ if (NOT RSTUDIO_SESSION_WIN32)
     install(DIRECTORY "resources/dependencies"
             DESTINATION ${RSTUDIO_INSTALL_SUPPORTING}/resources)
  
 -   # install pandoc
--   set(PANDOC_VERSION "2.7.3" CACHE INTERNAL "Pandoc version")
--
 -   set(PANDOC_BIN "${RSTUDIO_DEPENDENCIES_DIR}/common/pandoc/${PANDOC_VERSION}")
 -   file(GLOB PANDOC_FILES "${PANDOC_BIN}/pandoc*")
 -   install(FILES ${PANDOC_FILES}
@@ -62,5 +61,5 @@ index 8f0daa5..628d968 100644
     foreach(PKG ${RSTUDIO_EMBEDDED_PACKAGES})
        file(GLOB PKG_FILES "${RSTUDIO_DEPENDENCIES_DIR}/common/${PKG}*.tar.gz")
 -- 
-2.25.2
+2.29.2
 
