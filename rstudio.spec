@@ -65,6 +65,8 @@ Patch2:         0002-fix-rstudio-exec-path.patch
 Patch3:         0003-fix-resources-path.patch
 # Use system-provided nodejs binary
 Patch4:         0004-use-system-node.patch
+# https://github.com/rstudio/rstudio/pull/8606
+Patch5:         0005-fix-build-boost-175.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-1.8.0-openjdk-devel, R-core-devel
