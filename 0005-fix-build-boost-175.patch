@@ -1,83 +1,15 @@
-From 0c6a7374b04827f5db97ed9b4f71c9ff14442c6c Mon Sep 17 00:00:00 2001
-From: Jan Marvin Garbuszus <jan.garbuszus@ruhr-uni-bochum.de>
-Date: Sun, 13 Dec 2020 15:09:23 +0100
-Subject: [PATCH 1/2] fix building with boost 1.75
+From 91996c922569ec440eaed01707c7192ed67b1d2e Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?I=C3=B1aki=20=C3=9Acar?= <iucar@fedoraproject.org>
+Date: Mon, 25 Jan 2021 15:29:05 +0100
+Subject: [PATCH] fix build boost 175
 
 ---
- src/cpp/core/HtmlUtils.cpp          | 3 +++
- src/cpp/core/file_lock/FileLock.cpp | 3 +++
- src/cpp/r/session/RStdCallbacks.cpp | 2 ++
- 4 files changed, 8 insertions(+), 1 deletion(-)
-
-diff --git a/src/cpp/core/HtmlUtils.cpp b/src/cpp/core/HtmlUtils.cpp
-index c0ffb19f42..ddd28a008e 100644
---- a/src/cpp/core/HtmlUtils.cpp
-+++ b/src/cpp/core/HtmlUtils.cpp
-@@ -19,6 +19,7 @@
- 
- #include <boost/format.hpp>
- #include <boost/algorithm/string/predicate.hpp>
-+#include <boost/bind/bind.hpp>
- 
- #include <core/Base64.hpp>
- #include <core/FileSerializer.hpp>
-@@ -26,6 +27,8 @@
- 
- #include <core/http/Util.hpp>
- 
-+using namespace boost::placeholders;
-+
- namespace rstudio {
- namespace core {
- namespace html_utils {
-diff --git a/src/cpp/core/file_lock/FileLock.cpp b/src/cpp/core/file_lock/FileLock.cpp
-index 4495ca02c8..11e444acbe 100644
---- a/src/cpp/core/file_lock/FileLock.cpp
-+++ b/src/cpp/core/file_lock/FileLock.cpp
-@@ -27,10 +27,13 @@
- #include <core/system/Xdg.hpp>
- 
- #include <boost/algorithm/string.hpp>
-+#include <boost/bind/bind.hpp>
- 
- // borrowed from SessionConstants.hpp
- #define kRStudioSessionRoute "RSTUDIO_SESSION_ROUTE"
- 
-+using namespace boost::placeholders;
-+
- namespace rstudio {
- namespace core {
- 
-diff --git a/src/cpp/r/session/RStdCallbacks.cpp b/src/cpp/r/session/RStdCallbacks.cpp
-index 71a4b52177..039c3a8a5c 100644
---- a/src/cpp/r/session/RStdCallbacks.cpp
-+++ b/src/cpp/r/session/RStdCallbacks.cpp
-@@ -21,6 +21,7 @@
- 
- #include <boost/function.hpp>
- #include <boost/regex.hpp>
-+#include <boost/bind/bind.hpp>
- 
- #include <r/RExec.hpp>
- #include <r/ROptions.hpp>
-@@ -60,6 +61,7 @@ __declspec(dllimport) SA_TYPE SaveAction;
- }
- 
- using namespace rstudio::core;
-+using namespace boost::placeholders;
- 
- namespace rstudio {
- namespace r {
-
-From a73589c69c62b55935c2b0936bbe7ffe52fe0a49 Mon Sep 17 00:00:00 2001
-From: Jan Marvin Garbuszus <jan.garbuszus@ruhr-uni-bochum.de>
-Date: Wed, 16 Dec 2020 20:09:26 +0100
-Subject: [PATCH 2/2] <boost/bind.hpp> to <boost/bind/bind.hpp>
-
----
+ src/cpp/CMakeLists.txt                                   | 1 -
  src/cpp/core/ConfigUtils.cpp                             | 4 +++-
  src/cpp/core/FileLockTests.cpp                           | 4 +++-
  src/cpp/core/FileUtils.cpp                               | 4 +++-
+ src/cpp/core/HtmlUtils.cpp                               | 3 +++
+ src/cpp/core/file_lock/FileLock.cpp                      | 3 +++
  src/cpp/core/gwt/GwtSymbolMaps.cpp                       | 4 +++-
  src/cpp/core/http/SocketProxy.cpp                        | 4 ++--
  src/cpp/core/http/UriHandler.cpp                         | 4 +++-
@@ -122,11 +54,12 @@ Subject: [PATCH 2/2] <boost/bind.hpp> to <boost/bind/bind.hpp>
  src/cpp/r/session/RInit.cpp                              | 3 ++-
  src/cpp/r/session/RQuit.cpp                              | 3 ++-
  src/cpp/r/session/RSearchPath.cpp                        | 3 ++-
+ src/cpp/r/session/RStdCallbacks.cpp                      | 2 ++
  src/cpp/r/session/graphics/RGraphicsDevice.cpp           | 3 ++-
  src/cpp/r/session/graphics/RGraphicsPlotManager.cpp      | 3 ++-
  .../session/graphics/RGraphicsPlotManipulatorManager.cpp | 3 ++-
  src/cpp/r/session/graphics/RShadowPngGraphicsHandler.cpp | 3 ++-
- src/cpp/session/SessionConsoleProcessSocketTests.cpp     | 3 ++-
+ src/cpp/session/SessionConsoleProcessSocketTests.cpp     | 9 +++++----
  src/cpp/session/SessionSourceDatabase.cpp                | 3 ++-
  .../include/session/IncrementalFileChangeHandler.hpp     | 4 +++-
  src/cpp/session/include/session/SessionScopes.hpp        | 5 ++++-
@@ -179,10 +112,22 @@ Subject: [PATCH 2/2] <boost/bind.hpp> to <boost/bind/bind.hpp>
  .../session/modules/zotero/ZoteroCollectionsLocal.cpp    | 3 ++-
  src/cpp/shared_core/FilePath.cpp                         | 6 ++++--
  src/cpp/shared_core/system/Win32User.cpp                 | 4 +++-
- 104 files changed, 260 insertions(+), 115 deletions(-)
+ 108 files changed, 271 insertions(+), 119 deletions(-)
 
+diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
+index df54994..f6166c7 100644
+--- a/src/cpp/CMakeLists.txt
++++ b/src/cpp/CMakeLists.txt
+@@ -35,7 +35,6 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../../CMakeGlobals.txt")
+ 
+ # global directives
+ add_definitions(-DBOOST_ENABLE_ASSERT_HANDLER)
+-add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
+ 
+ # explicitly do not use new c++ 11 features for websocketpp
+ # they currently do not work with our source
 diff --git a/src/cpp/core/ConfigUtils.cpp b/src/cpp/core/ConfigUtils.cpp
-index f35f3255cb..78d59ea341 100644
+index a9cdabf..985eb8d 100644
 --- a/src/cpp/core/ConfigUtils.cpp
 +++ b/src/cpp/core/ConfigUtils.cpp
 @@ -18,14 +18,16 @@
@@ -204,7 +149,7 @@ index f35f3255cb..78d59ea341 100644
  namespace core {
  namespace config_utils {
 diff --git a/src/cpp/core/FileLockTests.cpp b/src/cpp/core/FileLockTests.cpp
-index 8fb610494a..53eada310b 100644
+index b77e39c..ebd29bc 100644
 --- a/src/cpp/core/FileLockTests.cpp
 +++ b/src/cpp/core/FileLockTests.cpp
 @@ -23,11 +23,13 @@
@@ -223,7 +168,7 @@ index 8fb610494a..53eada310b 100644
  namespace core {
  namespace tests {
 diff --git a/src/cpp/core/FileUtils.cpp b/src/cpp/core/FileUtils.cpp
-index 6a2dd9d2c4..578e5e78c5 100644
+index e1b4893..e2b18d5 100644
 --- a/src/cpp/core/FileUtils.cpp
 +++ b/src/cpp/core/FileUtils.cpp
 @@ -16,7 +16,7 @@
@@ -244,8 +189,47 @@ index 6a2dd9d2c4..578e5e78c5 100644
  namespace rstudio {
  namespace core {
  namespace file_utils {
+diff --git a/src/cpp/core/HtmlUtils.cpp b/src/cpp/core/HtmlUtils.cpp
+index 73de8ee..ca0adb4 100644
+--- a/src/cpp/core/HtmlUtils.cpp
++++ b/src/cpp/core/HtmlUtils.cpp
+@@ -19,6 +19,7 @@
+ 
+ #include <boost/format.hpp>
+ #include <boost/algorithm/string/predicate.hpp>
++#include <boost/bind/bind.hpp>
+ 
+ #include <core/Base64.hpp>
+ #include <core/FileSerializer.hpp>
+@@ -26,6 +27,8 @@
+ 
+ #include <core/http/Util.hpp>
+ 
++using namespace boost::placeholders;
++
+ namespace rstudio {
+ namespace core {
+ namespace html_utils {
+diff --git a/src/cpp/core/file_lock/FileLock.cpp b/src/cpp/core/file_lock/FileLock.cpp
+index e68d4b0..274fd64 100644
+--- a/src/cpp/core/file_lock/FileLock.cpp
++++ b/src/cpp/core/file_lock/FileLock.cpp
+@@ -27,10 +27,13 @@
+ #include <core/system/Xdg.hpp>
+ 
+ #include <boost/algorithm/string.hpp>
++#include <boost/bind/bind.hpp>
+ 
+ // borrowed from SessionConstants.hpp
+ #define kRStudioSessionRoute "RSTUDIO_SESSION_ROUTE"
+ 
++using namespace boost::placeholders;
++
+ namespace rstudio {
+ namespace core {
+ 
 diff --git a/src/cpp/core/gwt/GwtSymbolMaps.cpp b/src/cpp/core/gwt/GwtSymbolMaps.cpp
-index 3d641d10d9..fc743c5256 100644
+index 5196221..7b67d94 100644
 --- a/src/cpp/core/gwt/GwtSymbolMaps.cpp
 +++ b/src/cpp/core/gwt/GwtSymbolMaps.cpp
 @@ -20,16 +20,18 @@
@@ -269,7 +253,7 @@ index 3d641d10d9..fc743c5256 100644
  // (our rev was 11565, we should track to future changes)
  
 diff --git a/src/cpp/core/http/SocketProxy.cpp b/src/cpp/core/http/SocketProxy.cpp
-index 4e80c6124e..6d814a0abf 100644
+index b44b453..ef69f56 100644
 --- a/src/cpp/core/http/SocketProxy.cpp
 +++ b/src/cpp/core/http/SocketProxy.cpp
 @@ -27,9 +27,8 @@
@@ -292,7 +276,7 @@ index 4e80c6124e..6d814a0abf 100644
  namespace rstudio {
  namespace core {
 diff --git a/src/cpp/core/http/UriHandler.cpp b/src/cpp/core/http/UriHandler.cpp
-index b350d19db8..d8e6bf6513 100644
+index b44473e..b2783b7 100644
 --- a/src/cpp/core/http/UriHandler.cpp
 +++ b/src/cpp/core/http/UriHandler.cpp
 @@ -17,11 +17,13 @@
@@ -311,7 +295,7 @@ index b350d19db8..d8e6bf6513 100644
  namespace core {
  namespace http {
 diff --git a/src/cpp/core/include/core/Predicate.hpp b/src/cpp/core/include/core/Predicate.hpp
-index 9af2c3e0ac..ee6423856e 100644
+index 6dd8a95..8fcede7 100644
 --- a/src/cpp/core/include/core/Predicate.hpp
 +++ b/src/cpp/core/include/core/Predicate.hpp
 @@ -16,8 +16,10 @@
@@ -327,7 +311,7 @@ index 9af2c3e0ac..ee6423856e 100644
  namespace rstudio {
  namespace core {
 diff --git a/src/cpp/core/include/core/http/AsyncUriHandler.hpp b/src/cpp/core/include/core/http/AsyncUriHandler.hpp
-index 6a6a99cc35..845f1d9866 100644
+index b268256..a49cb7b 100644
 --- a/src/cpp/core/include/core/http/AsyncUriHandler.hpp
 +++ b/src/cpp/core/include/core/http/AsyncUriHandler.hpp
 @@ -20,15 +20,17 @@
@@ -350,7 +334,7 @@ index 6a6a99cc35..845f1d9866 100644
  namespace core {
  namespace http {
 diff --git a/src/cpp/core/include/core/http/Message.hpp b/src/cpp/core/include/core/http/Message.hpp
-index b3736d6d18..8930391567 100644
+index 9ec3040..f235fa7 100644
 --- a/src/cpp/core/include/core/http/Message.hpp
 +++ b/src/cpp/core/include/core/http/Message.hpp
 @@ -20,9 +20,11 @@
@@ -367,7 +351,7 @@ index b3736d6d18..8930391567 100644
  namespace asio {
     class const_buffer;
 diff --git a/src/cpp/core/include/core/json/JsonRpc.hpp b/src/cpp/core/include/core/json/JsonRpc.hpp
-index a32606fbc1..839440fda5 100644
+index 34a7e4a..ba4a127 100644
 --- a/src/cpp/core/include/core/json/JsonRpc.hpp
 +++ b/src/cpp/core/include/core/json/JsonRpc.hpp
 @@ -91,14 +91,16 @@ struct is_error_code_enum<rstudio::core::json::errc::errc_t>
@@ -389,7 +373,7 @@ index a32606fbc1..839440fda5 100644
  namespace core {
  namespace http {
 diff --git a/src/cpp/core/include/core/r_util/RSourceIndex.hpp b/src/cpp/core/include/core/r_util/RSourceIndex.hpp
-index 94fc0b573a..7919f2b522 100644
+index 36de9ad..8948c93 100644
 --- a/src/cpp/core/include/core/r_util/RSourceIndex.hpp
 +++ b/src/cpp/core/include/core/r_util/RSourceIndex.hpp
 @@ -19,12 +19,12 @@
@@ -416,7 +400,7 @@ index 94fc0b573a..7919f2b522 100644
  namespace core {
  namespace r_util {
 diff --git a/src/cpp/core/include/core/text/TemplateFilter.hpp b/src/cpp/core/include/core/text/TemplateFilter.hpp
-index 13fc5a050f..a6da38b9d6 100644
+index f91c59c..47167e2 100644
 --- a/src/cpp/core/include/core/text/TemplateFilter.hpp
 +++ b/src/cpp/core/include/core/text/TemplateFilter.hpp
 @@ -21,13 +21,15 @@
@@ -437,7 +421,7 @@ index 13fc5a050f..a6da38b9d6 100644
  namespace core {
  
 diff --git a/src/cpp/core/markdown/MathJax.cpp b/src/cpp/core/markdown/MathJax.cpp
-index 97420eb02d..e02bc035b8 100644
+index f6e2edf..a7f2f0e 100644
 --- a/src/cpp/core/markdown/MathJax.cpp
 +++ b/src/cpp/core/markdown/MathJax.cpp
 @@ -17,13 +17,15 @@
@@ -458,7 +442,7 @@ index 97420eb02d..e02bc035b8 100644
  namespace core {
  
 diff --git a/src/cpp/core/r_util/RActiveSessions.cpp b/src/cpp/core/r_util/RActiveSessions.cpp
-index ce8a2df080..7fc1faa2d2 100644
+index 6b110b1..089e612 100644
 --- a/src/cpp/core/r_util/RActiveSessions.cpp
 +++ b/src/cpp/core/r_util/RActiveSessions.cpp
 @@ -15,7 +15,7 @@
@@ -480,7 +464,7 @@ index ce8a2df080..7fc1faa2d2 100644
  namespace core {
  namespace r_util {
 diff --git a/src/cpp/core/r_util/RSourceIndex.cpp b/src/cpp/core/r_util/RSourceIndex.cpp
-index 71155c88ae..5008ded017 100644
+index ae37d6b..b8b37dd 100644
 --- a/src/cpp/core/r_util/RSourceIndex.cpp
 +++ b/src/cpp/core/r_util/RSourceIndex.cpp
 @@ -25,8 +25,10 @@
@@ -496,7 +480,7 @@ index 71155c88ae..5008ded017 100644
  namespace rstudio {
  namespace core {
 diff --git a/src/cpp/core/r_util/RVersionsPosix.cpp b/src/cpp/core/r_util/RVersionsPosix.cpp
-index 146918eaa0..159d29b58b 100644
+index cfe073b..4b2772c 100644
 --- a/src/cpp/core/r_util/RVersionsPosix.cpp
 +++ b/src/cpp/core/r_util/RVersionsPosix.cpp
 @@ -18,7 +18,7 @@
@@ -518,7 +502,7 @@ index 146918eaa0..159d29b58b 100644
  namespace core {
  namespace r_util {
 diff --git a/src/cpp/core/spelling/HunspellCustomDictionaries.cpp b/src/cpp/core/spelling/HunspellCustomDictionaries.cpp
-index 719c5e0052..416a491b22 100644
+index fcfa836..cd9370d 100644
 --- a/src/cpp/core/spelling/HunspellCustomDictionaries.cpp
 +++ b/src/cpp/core/spelling/HunspellCustomDictionaries.cpp
 @@ -15,11 +15,13 @@
@@ -537,7 +521,7 @@ index 719c5e0052..416a491b22 100644
  namespace core {
  namespace spelling {
 diff --git a/src/cpp/core/spelling/HunspellDictionaryManager.cpp b/src/cpp/core/spelling/HunspellDictionaryManager.cpp
-index 4d53b96f5c..5a45200c46 100644
+index a73ef70..6f39c81 100644
 --- a/src/cpp/core/spelling/HunspellDictionaryManager.cpp
 +++ b/src/cpp/core/spelling/HunspellDictionaryManager.cpp
 @@ -16,11 +16,13 @@
@@ -556,7 +540,7 @@ index 4d53b96f5c..5a45200c46 100644
  namespace core {
  namespace spelling {
 diff --git a/src/cpp/core/system/ChildProcessSubprocPollTests.cpp b/src/cpp/core/system/ChildProcessSubprocPollTests.cpp
-index c7e297e8e5..50d17c9808 100644
+index ba97b57..8231f8c 100644
 --- a/src/cpp/core/system/ChildProcessSubprocPollTests.cpp
 +++ b/src/cpp/core/system/ChildProcessSubprocPollTests.cpp
 @@ -15,11 +15,13 @@
@@ -575,7 +559,7 @@ index c7e297e8e5..50d17c9808 100644
  namespace core {
  namespace system {
 diff --git a/src/cpp/core/system/Environment.cpp b/src/cpp/core/system/Environment.cpp
-index cc676cbb85..b020e26705 100644
+index c32faf6..b127b9d 100644
 --- a/src/cpp/core/system/Environment.cpp
 +++ b/src/cpp/core/system/Environment.cpp
 @@ -20,7 +20,7 @@
@@ -597,7 +581,7 @@ index cc676cbb85..b020e26705 100644
  namespace core {
  namespace system {
 diff --git a/src/cpp/core/system/PosixChildProcess.cpp b/src/cpp/core/system/PosixChildProcess.cpp
-index 3f57cd09fc..823aa265e8 100644
+index 3c18955..55b5559 100644
 --- a/src/cpp/core/system/PosixChildProcess.cpp
 +++ b/src/cpp/core/system/PosixChildProcess.cpp
 @@ -33,7 +33,7 @@
@@ -619,7 +603,7 @@ index 3f57cd09fc..823aa265e8 100644
  namespace core {
  namespace system {
 diff --git a/src/cpp/core/system/PosixChildProcessTracker.cpp b/src/cpp/core/system/PosixChildProcessTracker.cpp
-index 985e70f43f..3af41ef12d 100644
+index 8cc8f50..1b876fe 100644
 --- a/src/cpp/core/system/PosixChildProcessTracker.cpp
 +++ b/src/cpp/core/system/PosixChildProcessTracker.cpp
 @@ -18,7 +18,9 @@
@@ -634,7 +618,7 @@ index 985e70f43f..3af41ef12d 100644
  namespace rstudio {
  namespace core {
 diff --git a/src/cpp/core/system/PosixOutputCapture.cpp b/src/cpp/core/system/PosixOutputCapture.cpp
-index 8a83c57c7a..5e68f20bb1 100644
+index 549e90e..2d3e0dc 100644
 --- a/src/cpp/core/system/PosixOutputCapture.cpp
 +++ b/src/cpp/core/system/PosixOutputCapture.cpp
 @@ -29,7 +29,9 @@
@@ -649,7 +633,7 @@ index 8a83c57c7a..5e68f20bb1 100644
  namespace rstudio {
  namespace core {
 diff --git a/src/cpp/core/system/PosixProcess.cpp b/src/cpp/core/system/PosixProcess.cpp
-index 9229afc773..e94c89d3f9 100644
+index ae29611..5efc47a 100644
 --- a/src/cpp/core/system/PosixProcess.cpp
 +++ b/src/cpp/core/system/PosixProcess.cpp
 @@ -16,13 +16,15 @@
@@ -670,7 +654,7 @@ index 9229afc773..e94c89d3f9 100644
  namespace core {
  namespace system {
 diff --git a/src/cpp/core/system/PosixSystem.cpp b/src/cpp/core/system/PosixSystem.cpp
-index 3cad6a4cdb..7fb3093b62 100644
+index 1f90b7a..9169549 100644
 --- a/src/cpp/core/system/PosixSystem.cpp
 +++ b/src/cpp/core/system/PosixSystem.cpp
 @@ -23,7 +23,7 @@
@@ -692,7 +676,7 @@ index 3cad6a4cdb..7fb3093b62 100644
  namespace core {
  namespace system {
 diff --git a/src/cpp/core/system/Process.cpp b/src/cpp/core/system/Process.cpp
-index bd280ce932..3df73ade20 100644
+index 369a045..02b610c 100644
 --- a/src/cpp/core/system/Process.cpp
 +++ b/src/cpp/core/system/Process.cpp
 @@ -18,7 +18,7 @@
@@ -714,7 +698,7 @@ index bd280ce932..3df73ade20 100644
  namespace core {
  namespace system {
 diff --git a/src/cpp/core/system/ProcessTests.cpp b/src/cpp/core/system/ProcessTests.cpp
-index 29971eb887..bd8057cdf9 100644
+index 74d1b55..7b4bb12 100644
 --- a/src/cpp/core/system/ProcessTests.cpp
 +++ b/src/cpp/core/system/ProcessTests.cpp
 @@ -17,7 +17,7 @@
@@ -736,7 +720,7 @@ index 29971eb887..bd8057cdf9 100644
  namespace core {
  namespace system {
 diff --git a/src/cpp/core/system/Win32System.cpp b/src/cpp/core/system/Win32System.cpp
-index 74ca314aa1..74a2263147 100644
+index c9e9826..af1ebe7 100644
 --- a/src/cpp/core/system/Win32System.cpp
 +++ b/src/cpp/core/system/Win32System.cpp
 @@ -29,12 +29,12 @@
@@ -763,7 +747,7 @@ index 74ca314aa1..74a2263147 100644
  namespace core {
  namespace system {
 diff --git a/src/cpp/core/system/file_monitor/FileMonitor.cpp b/src/cpp/core/system/file_monitor/FileMonitor.cpp
-index 39802e171f..6ac9b85a21 100644
+index ed387cf..9ae2fb5 100644
 --- a/src/cpp/core/system/file_monitor/FileMonitor.cpp
 +++ b/src/cpp/core/system/file_monitor/FileMonitor.cpp
 @@ -18,8 +18,8 @@
@@ -786,7 +770,7 @@ index 39802e171f..6ac9b85a21 100644
  namespace core {
  namespace system {
 diff --git a/src/cpp/core/system/file_monitor/FileMonitorImpl.hpp b/src/cpp/core/system/file_monitor/FileMonitorImpl.hpp
-index 1500160557..35918b201d 100644
+index a87ecc9..56a7b8d 100644
 --- a/src/cpp/core/system/file_monitor/FileMonitorImpl.hpp
 +++ b/src/cpp/core/system/file_monitor/FileMonitorImpl.hpp
 @@ -20,7 +20,7 @@
@@ -808,7 +792,7 @@ index 1500160557..35918b201d 100644
  namespace core {   
  namespace system {
 diff --git a/src/cpp/core/system/file_monitor/MacFileMonitor.cpp b/src/cpp/core/system/file_monitor/MacFileMonitor.cpp
-index 16739dd331..d7d1b6c3bc 100644
+index a654482..af7568a 100644
 --- a/src/cpp/core/system/file_monitor/MacFileMonitor.cpp
 +++ b/src/cpp/core/system/file_monitor/MacFileMonitor.cpp
 @@ -19,7 +19,7 @@
@@ -830,7 +814,7 @@ index 16739dd331..d7d1b6c3bc 100644
  namespace core {
  namespace system {
 diff --git a/src/cpp/core/text/DcfParser.cpp b/src/cpp/core/text/DcfParser.cpp
-index bac45625b7..f608042167 100644
+index d6231d3..9c7ce1f 100644
 --- a/src/cpp/core/text/DcfParser.cpp
 +++ b/src/cpp/core/text/DcfParser.cpp
 @@ -22,17 +22,18 @@
@@ -855,7 +839,7 @@ index bac45625b7..f608042167 100644
  namespace rstudio {
  namespace core {
 diff --git a/src/cpp/desktop/DesktopMain.cpp b/src/cpp/desktop/DesktopMain.cpp
-index 750bbd8573..ce6bf2914b 100644
+index f2dfdc5..cf3719b 100644
 --- a/src/cpp/desktop/DesktopMain.cpp
 +++ b/src/cpp/desktop/DesktopMain.cpp
 @@ -18,9 +18,9 @@
@@ -879,7 +863,7 @@ index 750bbd8573..ce6bf2914b 100644
  using namespace rstudio::core;
  using namespace rstudio::desktop;
 diff --git a/src/cpp/desktop/DesktopMainWindow.cpp b/src/cpp/desktop/DesktopMainWindow.cpp
-index 691167836c..803a9754f2 100644
+index 9dda05a..39710a1 100644
 --- a/src/cpp/desktop/DesktopMainWindow.cpp
 +++ b/src/cpp/desktop/DesktopMainWindow.cpp
 @@ -19,8 +19,8 @@
@@ -901,7 +885,7 @@ index 691167836c..803a9754f2 100644
  namespace rstudio {
  namespace desktop {
 diff --git a/src/cpp/desktop/DesktopSessionLauncher.cpp b/src/cpp/desktop/DesktopSessionLauncher.cpp
-index 05431c0c47..411547d87f 100644
+index 55e87c0..885bbe6 100644
 --- a/src/cpp/desktop/DesktopSessionLauncher.cpp
 +++ b/src/cpp/desktop/DesktopSessionLauncher.cpp
 @@ -17,7 +17,7 @@
@@ -922,7 +906,7 @@ index 05431c0c47..411547d87f 100644
  namespace rstudio {
  namespace desktop {
 diff --git a/src/cpp/desktop/DesktopWin32DetectRHome.cpp b/src/cpp/desktop/DesktopWin32DetectRHome.cpp
-index a6711e6e60..87e1a37904 100644
+index 0afb02f..a78cc60 100644
 --- a/src/cpp/desktop/DesktopWin32DetectRHome.cpp
 +++ b/src/cpp/desktop/DesktopWin32DetectRHome.cpp
 @@ -21,7 +21,7 @@
@@ -943,7 +927,7 @@ index a6711e6e60..87e1a37904 100644
  namespace rstudio {
  namespace desktop {
 diff --git a/src/cpp/ext/websocketpp/common/functional.hpp b/src/cpp/ext/websocketpp/common/functional.hpp
-index d332dd15ec..b0ebf1cca1 100644
+index d332dd1..b0ebf1c 100644
 --- a/src/cpp/ext/websocketpp/common/functional.hpp
 +++ b/src/cpp/ext/websocketpp/common/functional.hpp
 @@ -52,9 +52,11 @@
@@ -960,7 +944,7 @@ index d332dd15ec..b0ebf1cca1 100644
  
  
 diff --git a/src/cpp/ext/websocketpp/transport/asio/endpoint.hpp b/src/cpp/ext/websocketpp/transport/asio/endpoint.hpp
-index b418060a85..935d62e7e7 100644
+index b418060..935d62e 100644
 --- a/src/cpp/ext/websocketpp/transport/asio/endpoint.hpp
 +++ b/src/cpp/ext/websocketpp/transport/asio/endpoint.hpp
 @@ -38,12 +38,14 @@
@@ -980,7 +964,7 @@ index b418060a85..935d62e7e7 100644
  namespace transport {
  namespace asio {
 diff --git a/src/cpp/r/RJsonRpc.cpp b/src/cpp/r/RJsonRpc.cpp
-index 5e54597e99..1f02cdfdd3 100644
+index a902ccd..4699ea5 100644
 --- a/src/cpp/r/RJsonRpc.cpp
 +++ b/src/cpp/r/RJsonRpc.cpp
 @@ -47,7 +47,7 @@
@@ -1001,7 +985,7 @@ index 5e54597e99..1f02cdfdd3 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/RSexp.cpp b/src/cpp/r/RSexp.cpp
-index f6d236e08a..16d989fc11 100644
+index 3d225af..1de56b7 100644
 --- a/src/cpp/r/RSexp.cpp
 +++ b/src/cpp/r/RSexp.cpp
 @@ -25,10 +25,10 @@
@@ -1025,7 +1009,7 @@ index f6d236e08a..16d989fc11 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/RSourceManager.cpp b/src/cpp/r/RSourceManager.cpp
-index cdad0b2611..5c6909f82e 100644
+index c1dfc27..5a6a5d6 100644
 --- a/src/cpp/r/RSourceManager.cpp
 +++ b/src/cpp/r/RSourceManager.cpp
 @@ -17,8 +17,8 @@
@@ -1047,7 +1031,7 @@ index cdad0b2611..5c6909f82e 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/session/RClientState.cpp b/src/cpp/r/session/RClientState.cpp
-index 9fe6cbad7b..f5f9966391 100644
+index d43bf63..bb502fc 100644
 --- a/src/cpp/r/session/RClientState.cpp
 +++ b/src/cpp/r/session/RClientState.cpp
 @@ -17,8 +17,8 @@
@@ -1069,7 +1053,7 @@ index 9fe6cbad7b..f5f9966391 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/session/RConsoleHistory.cpp b/src/cpp/r/session/RConsoleHistory.cpp
-index 140ff0593c..a347b4ebc8 100644
+index 0ac0042..d03f7f5 100644
 --- a/src/cpp/r/session/RConsoleHistory.cpp
 +++ b/src/cpp/r/session/RConsoleHistory.cpp
 @@ -15,9 +15,9 @@
@@ -1092,7 +1076,7 @@ index 140ff0593c..a347b4ebc8 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/session/REmbeddedWin32.cpp b/src/cpp/r/session/REmbeddedWin32.cpp
-index 7233248f2e..5174ab78f3 100644
+index fa6683c..9693af7 100644
 --- a/src/cpp/r/session/REmbeddedWin32.cpp
 +++ b/src/cpp/r/session/REmbeddedWin32.cpp
 @@ -28,8 +28,8 @@
@@ -1114,7 +1098,7 @@ index 7233248f2e..5174ab78f3 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/session/RInit.cpp b/src/cpp/r/session/RInit.cpp
-index 3564ca1aea..6b1d301ed2 100644
+index 7a94538..33f17aa 100644
 --- a/src/cpp/r/session/RInit.cpp
 +++ b/src/cpp/r/session/RInit.cpp
 @@ -13,7 +13,7 @@
@@ -1135,7 +1119,7 @@ index 3564ca1aea..6b1d301ed2 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/session/RQuit.cpp b/src/cpp/r/session/RQuit.cpp
-index b04f85c61d..d0eef47986 100644
+index 32f0165..1792a2d 100644
 --- a/src/cpp/r/session/RQuit.cpp
 +++ b/src/cpp/r/session/RQuit.cpp
 @@ -15,7 +15,7 @@
@@ -1156,7 +1140,7 @@ index b04f85c61d..d0eef47986 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/session/RSearchPath.cpp b/src/cpp/r/session/RSearchPath.cpp
-index 61462cf0a4..a65fdf4963 100644
+index a638692..3284ddb 100644
 --- a/src/cpp/r/session/RSearchPath.cpp
 +++ b/src/cpp/r/session/RSearchPath.cpp
 @@ -26,11 +26,11 @@
@@ -1180,8 +1164,28 @@ index 61462cf0a4..a65fdf4963 100644
  
  namespace rstudio {
  namespace r {
+diff --git a/src/cpp/r/session/RStdCallbacks.cpp b/src/cpp/r/session/RStdCallbacks.cpp
+index 214349b..f461632 100644
+--- a/src/cpp/r/session/RStdCallbacks.cpp
++++ b/src/cpp/r/session/RStdCallbacks.cpp
+@@ -21,6 +21,7 @@
+ 
+ #include <boost/function.hpp>
+ #include <boost/regex.hpp>
++#include <boost/bind/bind.hpp>
+ 
+ #include <r/RExec.hpp>
+ #include <r/ROptions.hpp>
+@@ -60,6 +61,7 @@ __declspec(dllimport) SA_TYPE SaveAction;
+ }
+ 
+ using namespace rstudio::core;
++using namespace boost::placeholders;
+ 
+ namespace rstudio {
+ namespace r {
 diff --git a/src/cpp/r/session/graphics/RGraphicsDevice.cpp b/src/cpp/r/session/graphics/RGraphicsDevice.cpp
-index e7c438939a..2444329958 100644
+index f7140c7..f91ebf6 100644
 --- a/src/cpp/r/session/graphics/RGraphicsDevice.cpp
 +++ b/src/cpp/r/session/graphics/RGraphicsDevice.cpp
 @@ -17,8 +17,8 @@
@@ -1203,7 +1207,7 @@ index e7c438939a..2444329958 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/session/graphics/RGraphicsPlotManager.cpp b/src/cpp/r/session/graphics/RGraphicsPlotManager.cpp
-index 6c7a0f179a..90b3588c7b 100644
+index fdc2902..3d2fcda 100644
 --- a/src/cpp/r/session/graphics/RGraphicsPlotManager.cpp
 +++ b/src/cpp/r/session/graphics/RGraphicsPlotManager.cpp
 @@ -18,10 +18,10 @@
@@ -1227,7 +1231,7 @@ index 6c7a0f179a..90b3588c7b 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/session/graphics/RGraphicsPlotManipulatorManager.cpp b/src/cpp/r/session/graphics/RGraphicsPlotManipulatorManager.cpp
-index 659d142859..fe70a19587 100644
+index 615cc57..217eb4a 100644
 --- a/src/cpp/r/session/graphics/RGraphicsPlotManipulatorManager.cpp
 +++ b/src/cpp/r/session/graphics/RGraphicsPlotManipulatorManager.cpp
 @@ -18,8 +18,8 @@
@@ -1249,7 +1253,7 @@ index 659d142859..fe70a19587 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/r/session/graphics/RShadowPngGraphicsHandler.cpp b/src/cpp/r/session/graphics/RShadowPngGraphicsHandler.cpp
-index 4bf247e2f0..097f44ba6e 100644
+index 1400980..df64be1 100644
 --- a/src/cpp/r/session/graphics/RShadowPngGraphicsHandler.cpp
 +++ b/src/cpp/r/session/graphics/RShadowPngGraphicsHandler.cpp
 @@ -18,8 +18,8 @@
@@ -1271,7 +1275,7 @@ index 4bf247e2f0..097f44ba6e 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/session/SessionConsoleProcessSocketTests.cpp b/src/cpp/session/SessionConsoleProcessSocketTests.cpp
-index 46604012ab..916753c14a 100644
+index e103100..0a42e96 100644
 --- a/src/cpp/session/SessionConsoleProcessSocketTests.cpp
 +++ b/src/cpp/session/SessionConsoleProcessSocketTests.cpp
 @@ -16,11 +16,11 @@
@@ -1295,8 +1299,25 @@ index 46604012ab..916753c14a 100644
  
  namespace {
  
+@@ -245,13 +246,13 @@ public:
+          // Register our message handler
+          client_.set_message_handler(bind(&SocketClient::on_message,
+                                           SocketClient::shared_from_this(),
+-                                          &client_, ::_1, ::_2));
++                                          &client_, _1, _2));
+          client_.set_open_handler(bind(&SocketClient::on_open,
+                                        SocketClient::shared_from_this(),
+-                                       &client_, ::_1));
++                                       &client_, _1));
+          client_.set_fail_handler(bind(&SocketClient::on_fail,
+                                        SocketClient::shared_from_this(),
+-                                       &client_, ::_1));
++                                       &client_, _1));
+ 
+          websocketpp::lib::error_code ec;
+          client::connection_ptr con = client_.get_connection(uri, ec);
 diff --git a/src/cpp/session/SessionSourceDatabase.cpp b/src/cpp/session/SessionSourceDatabase.cpp
-index 23e14b2bde..b7a8feedf0 100644
+index c20cd07..49b28ed 100644
 --- a/src/cpp/session/SessionSourceDatabase.cpp
 +++ b/src/cpp/session/SessionSourceDatabase.cpp
 @@ -19,8 +19,8 @@
@@ -1318,7 +1339,7 @@ index 23e14b2bde..b7a8feedf0 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/include/session/IncrementalFileChangeHandler.hpp b/src/cpp/session/include/session/IncrementalFileChangeHandler.hpp
-index 0d30e41cfd..7b95c58c5e 100644
+index 97618f2..7dbdcae 100644
 --- a/src/cpp/session/include/session/IncrementalFileChangeHandler.hpp
 +++ b/src/cpp/session/include/session/IncrementalFileChangeHandler.hpp
 @@ -20,7 +20,7 @@
@@ -1340,7 +1361,7 @@ index 0d30e41cfd..7b95c58c5e 100644
  namespace session {
  
 diff --git a/src/cpp/session/include/session/SessionScopes.hpp b/src/cpp/session/include/session/SessionScopes.hpp
-index e7de71914d..177ed7ee9f 100644
+index 328b15f..2725b84 100644
 --- a/src/cpp/session/include/session/SessionScopes.hpp
 +++ b/src/cpp/session/include/session/SessionScopes.hpp
 @@ -19,8 +19,8 @@
@@ -1364,7 +1385,7 @@ index e7de71914d..177ed7ee9f 100644
  namespace session {
  
 diff --git a/src/cpp/session/modules/SessionAskPass.cpp b/src/cpp/session/modules/SessionAskPass.cpp
-index 000197c47d..cf2e72e44b 100644
+index fdf7516..eabda7c 100644
 --- a/src/cpp/session/modules/SessionAskPass.cpp
 +++ b/src/cpp/session/modules/SessionAskPass.cpp
 @@ -15,7 +15,7 @@
@@ -1385,7 +1406,7 @@ index 000197c47d..cf2e72e44b 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionAskSecret.cpp b/src/cpp/session/modules/SessionAskSecret.cpp
-index 57250f89df..ee8d119180 100644
+index f1b0dc9..e3112c9 100644
 --- a/src/cpp/session/modules/SessionAskSecret.cpp
 +++ b/src/cpp/session/modules/SessionAskSecret.cpp
 @@ -15,7 +15,7 @@
@@ -1406,7 +1427,7 @@ index 57250f89df..ee8d119180 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionBreakpoints.cpp b/src/cpp/session/modules/SessionBreakpoints.cpp
-index 8162957fe3..0ba0cc2663 100644
+index 1c48d45..216f11d 100644
 --- a/src/cpp/session/modules/SessionBreakpoints.cpp
 +++ b/src/cpp/session/modules/SessionBreakpoints.cpp
 @@ -17,9 +17,9 @@
@@ -1429,7 +1450,7 @@ index 8162957fe3..0ba0cc2663 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionCRANMirrors.cpp b/src/cpp/session/modules/SessionCRANMirrors.cpp
-index 426d2af9e5..edd2011da2 100644
+index 3ba7791..385628f 100644
 --- a/src/cpp/session/modules/SessionCRANMirrors.cpp
 +++ b/src/cpp/session/modules/SessionCRANMirrors.cpp
 @@ -15,7 +15,7 @@
@@ -1450,7 +1471,7 @@ index 426d2af9e5..edd2011da2 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionCodeSearch.cpp b/src/cpp/session/modules/SessionCodeSearch.cpp
-index e75545fb3e..9f76e4007f 100644
+index 5876de1..6d8370e 100644
 --- a/src/cpp/session/modules/SessionCodeSearch.cpp
 +++ b/src/cpp/session/modules/SessionCodeSearch.cpp
 @@ -23,13 +23,13 @@
@@ -1477,7 +1498,7 @@ index e75545fb3e..9f76e4007f 100644
  namespace rstudio {
  namespace session {  
 diff --git a/src/cpp/session/modules/SessionCrypto.cpp b/src/cpp/session/modules/SessionCrypto.cpp
-index 31280dd991..44207a57e1 100644
+index 21f6f1d..fecf52c 100644
 --- a/src/cpp/session/modules/SessionCrypto.cpp
 +++ b/src/cpp/session/modules/SessionCrypto.cpp
 @@ -17,7 +17,7 @@
@@ -1498,7 +1519,7 @@ index 31280dd991..44207a57e1 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionDependencies.cpp b/src/cpp/session/modules/SessionDependencies.cpp
-index 6d0ebdb433..734c7e6877 100644
+index b59ad83..3651531 100644
 --- a/src/cpp/session/modules/SessionDependencies.cpp
 +++ b/src/cpp/session/modules/SessionDependencies.cpp
 @@ -16,8 +16,8 @@
@@ -1520,7 +1541,7 @@ index 6d0ebdb433..734c7e6877 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionDiagnostics.cpp b/src/cpp/session/modules/SessionDiagnostics.cpp
-index 1fafb44057..b0ce99e3fd 100644
+index b3472b8..c7fef4b 100644
 --- a/src/cpp/session/modules/SessionDiagnostics.cpp
 +++ b/src/cpp/session/modules/SessionDiagnostics.cpp
 @@ -41,7 +41,7 @@
@@ -1542,7 +1563,7 @@ index 1fafb44057..b0ce99e3fd 100644
  namespace session {
  namespace modules {
 diff --git a/src/cpp/session/modules/SessionDiagnosticsTests.cpp b/src/cpp/session/modules/SessionDiagnosticsTests.cpp
-index 347be98a89..4ff2a536fb 100644
+index 492d1e2..140fcdd 100644
 --- a/src/cpp/session/modules/SessionDiagnosticsTests.cpp
 +++ b/src/cpp/session/modules/SessionDiagnosticsTests.cpp
 @@ -25,11 +25,13 @@
@@ -1561,7 +1582,7 @@ index 347be98a89..4ff2a536fb 100644
  namespace session {
  namespace modules {
 diff --git a/src/cpp/session/modules/SessionDirty.cpp b/src/cpp/session/modules/SessionDirty.cpp
-index 197c334b0e..30b034a897 100644
+index 25db863..9013058 100644
 --- a/src/cpp/session/modules/SessionDirty.cpp
 +++ b/src/cpp/session/modules/SessionDirty.cpp
 @@ -17,9 +17,9 @@
@@ -1584,7 +1605,7 @@ index 197c334b0e..30b034a897 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionErrors.cpp b/src/cpp/session/modules/SessionErrors.cpp
-index aec300be4f..b40cf8a9cb 100644
+index 59e7db7..f81a4ec 100644
 --- a/src/cpp/session/modules/SessionErrors.cpp
 +++ b/src/cpp/session/modules/SessionErrors.cpp
 @@ -22,7 +22,7 @@
@@ -1605,7 +1626,7 @@ index aec300be4f..b40cf8a9cb 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionFilesListingMonitor.cpp b/src/cpp/session/modules/SessionFilesListingMonitor.cpp
-index 2232103a6e..7b618af976 100644
+index 9afa0c5..0bc4fc7 100644
 --- a/src/cpp/session/modules/SessionFilesListingMonitor.cpp
 +++ b/src/cpp/session/modules/SessionFilesListingMonitor.cpp
 @@ -17,7 +17,7 @@
@@ -1626,7 +1647,7 @@ index 2232103a6e..7b618af976 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionFind.cpp b/src/cpp/session/modules/SessionFind.cpp
-index 6fff11339e..41ccd79367 100644
+index b8c2138..0c5d6d1 100644
 --- a/src/cpp/session/modules/SessionFind.cpp
 +++ b/src/cpp/session/modules/SessionFind.cpp
 @@ -18,10 +18,10 @@
@@ -1651,7 +1672,7 @@ index 6fff11339e..41ccd79367 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionGraphics.cpp b/src/cpp/session/modules/SessionGraphics.cpp
-index 5b5bbc579c..d2edd37297 100644
+index 0746519..7123132 100644
 --- a/src/cpp/session/modules/SessionGraphics.cpp
 +++ b/src/cpp/session/modules/SessionGraphics.cpp
 @@ -15,7 +15,7 @@
@@ -1672,7 +1693,7 @@ index 5b5bbc579c..d2edd37297 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionHTMLPreview.cpp b/src/cpp/session/modules/SessionHTMLPreview.cpp
-index ccf0c4851b..30d408a0d9 100644
+index ac2ec86..3b5f924 100644
 --- a/src/cpp/session/modules/SessionHTMLPreview.cpp
 +++ b/src/cpp/session/modules/SessionHTMLPreview.cpp
 @@ -16,17 +16,15 @@
@@ -1705,7 +1726,7 @@ index ccf0c4851b..30d408a0d9 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionHistory.cpp b/src/cpp/session/modules/SessionHistory.cpp
-index f13d91e88b..331f35ebfa 100644
+index f0875b7..ed63fdf 100644
 --- a/src/cpp/session/modules/SessionHistory.cpp
 +++ b/src/cpp/session/modules/SessionHistory.cpp
 @@ -22,12 +22,12 @@
@@ -1731,7 +1752,7 @@ index f13d91e88b..331f35ebfa 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionLimits.cpp b/src/cpp/session/modules/SessionLimits.cpp
-index 13e8b1a9cb..c6cc97616f 100644
+index 30ac300..8a6a3c4 100644
 --- a/src/cpp/session/modules/SessionLimits.cpp
 +++ b/src/cpp/session/modules/SessionLimits.cpp
 @@ -17,8 +17,8 @@
@@ -1753,7 +1774,7 @@ index 13e8b1a9cb..c6cc97616f 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionLists.cpp b/src/cpp/session/modules/SessionLists.cpp
-index b4da316b15..5140778d80 100644
+index 856f285..dce06a7 100644
 --- a/src/cpp/session/modules/SessionLists.cpp
 +++ b/src/cpp/session/modules/SessionLists.cpp
 @@ -18,9 +18,9 @@
@@ -1776,7 +1797,7 @@ index b4da316b15..5140778d80 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionObjectExplorer.cpp b/src/cpp/session/modules/SessionObjectExplorer.cpp
-index 5f65cb3482..bc83c450e9 100644
+index 90a26e8..dd5613c 100644
 --- a/src/cpp/session/modules/SessionObjectExplorer.cpp
 +++ b/src/cpp/session/modules/SessionObjectExplorer.cpp
 @@ -17,7 +17,7 @@
@@ -1797,7 +1818,7 @@ index 5f65cb3482..bc83c450e9 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionPackages.cpp b/src/cpp/session/modules/SessionPackages.cpp
-index 3d55e4a95a..14339b6e00 100644
+index 21aac36..36fc0bc 100644
 --- a/src/cpp/session/modules/SessionPackages.cpp
 +++ b/src/cpp/session/modules/SessionPackages.cpp
 @@ -20,9 +20,9 @@
@@ -1820,7 +1841,7 @@ index 3d55e4a95a..14339b6e00 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionPath.cpp b/src/cpp/session/modules/SessionPath.cpp
-index c981fae66e..abee40d47c 100644
+index 3645b54..c429a0d 100644
 --- a/src/cpp/session/modules/SessionPath.cpp
 +++ b/src/cpp/session/modules/SessionPath.cpp
 @@ -18,7 +18,7 @@
@@ -1841,7 +1862,7 @@ index c981fae66e..abee40d47c 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionProjectTemplate.cpp b/src/cpp/session/modules/SessionProjectTemplate.cpp
-index fd1a9f403e..5533c258a6 100644
+index ed3c334..2dbfd02 100644
 --- a/src/cpp/session/modules/SessionProjectTemplate.cpp
 +++ b/src/cpp/session/modules/SessionProjectTemplate.cpp
 @@ -14,8 +14,8 @@
@@ -1863,7 +1884,7 @@ index fd1a9f403e..5533c258a6 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionRAddins.cpp b/src/cpp/session/modules/SessionRAddins.cpp
-index d567f1b019..4d457d6251 100644
+index 74a1ed8..eee89a9 100644
 --- a/src/cpp/session/modules/SessionRAddins.cpp
 +++ b/src/cpp/session/modules/SessionRAddins.cpp
 @@ -27,7 +27,7 @@
@@ -1884,7 +1905,7 @@ index d567f1b019..4d457d6251 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionRHooks.cpp b/src/cpp/session/modules/SessionRHooks.cpp
-index 63b040a1ba..a8cd82c44f 100644
+index 1efff12..d796d8b 100644
 --- a/src/cpp/session/modules/SessionRHooks.cpp
 +++ b/src/cpp/session/modules/SessionRHooks.cpp
 @@ -20,7 +20,7 @@
@@ -1905,7 +1926,7 @@ index 63b040a1ba..a8cd82c44f 100644
  Error initialize()
  {
 diff --git a/src/cpp/session/modules/SessionRParser.cpp b/src/cpp/session/modules/SessionRParser.cpp
-index f7c24ad425..82a2af68cd 100644
+index 08afec6..c7ea69e 100644
 --- a/src/cpp/session/modules/SessionRParser.cpp
 +++ b/src/cpp/session/modules/SessionRParser.cpp
 @@ -42,8 +42,10 @@
@@ -1921,7 +1942,7 @@ index f7c24ad425..82a2af68cd 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionRParser.hpp b/src/cpp/session/modules/SessionRParser.hpp
-index 1ef314a5e4..10b6f81964 100644
+index 2afe720..3324e14 100644
 --- a/src/cpp/session/modules/SessionRParser.hpp
 +++ b/src/cpp/session/modules/SessionRParser.hpp
 @@ -40,13 +40,15 @@
@@ -1943,7 +1964,7 @@ index 1ef314a5e4..10b6f81964 100644
  namespace session {
  namespace modules {
 diff --git a/src/cpp/session/modules/SessionRPubs.cpp b/src/cpp/session/modules/SessionRPubs.cpp
-index 4ed4e979bf..4a3fb945e0 100644
+index f7cf11a..e7bd067 100644
 --- a/src/cpp/session/modules/SessionRPubs.cpp
 +++ b/src/cpp/session/modules/SessionRPubs.cpp
 @@ -15,11 +15,11 @@
@@ -1968,7 +1989,7 @@ index 4ed4e979bf..4a3fb945e0 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionReticulate.cpp b/src/cpp/session/modules/SessionReticulate.cpp
-index ff69c9e265..0d7c1d064d 100644
+index 6531a1d..76cbf0a 100644
 --- a/src/cpp/session/modules/SessionReticulate.cpp
 +++ b/src/cpp/session/modules/SessionReticulate.cpp
 @@ -17,7 +17,7 @@
@@ -1989,7 +2010,7 @@ index ff69c9e265..0d7c1d064d 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionSVN.cpp b/src/cpp/session/modules/SessionSVN.cpp
-index 38d608719b..3c1a154497 100644
+index 93ca803..e0fd9dd 100644
 --- a/src/cpp/session/modules/SessionSVN.cpp
 +++ b/src/cpp/session/modules/SessionSVN.cpp
 @@ -22,10 +22,10 @@
@@ -2013,7 +2034,7 @@ index 38d608719b..3c1a154497 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionSnippets.cpp b/src/cpp/session/modules/SessionSnippets.cpp
-index af9bfb3847..a838375667 100644
+index 6212453..8589b1a 100644
 --- a/src/cpp/session/modules/SessionSnippets.cpp
 +++ b/src/cpp/session/modules/SessionSnippets.cpp
 @@ -21,10 +21,12 @@
@@ -2031,7 +2052,7 @@ index af9bfb3847..a838375667 100644
  namespace session {
  namespace modules {
 diff --git a/src/cpp/session/modules/SessionSource.cpp b/src/cpp/session/modules/SessionSource.cpp
-index 14f0be8f5e..af634688a3 100644
+index d02a6a8..96521ee 100644
 --- a/src/cpp/session/modules/SessionSource.cpp
 +++ b/src/cpp/session/modules/SessionSource.cpp
 @@ -22,8 +22,8 @@
@@ -2053,7 +2074,7 @@ index 14f0be8f5e..af634688a3 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionThemes.cpp b/src/cpp/session/modules/SessionThemes.cpp
-index 0196ff4b36..4f2438ff46 100644
+index 81f86ff..1e36565 100644
 --- a/src/cpp/session/modules/SessionThemes.cpp
 +++ b/src/cpp/session/modules/SessionThemes.cpp
 @@ -15,12 +15,12 @@
@@ -2081,7 +2102,7 @@ index 0196ff4b36..4f2438ff46 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionUpdates.cpp b/src/cpp/session/modules/SessionUpdates.cpp
-index f82118c8e9..b34b202d86 100644
+index 62b8331..38950aa 100644
 --- a/src/cpp/session/modules/SessionUpdates.cpp
 +++ b/src/cpp/session/modules/SessionUpdates.cpp
 @@ -20,7 +20,7 @@
@@ -2102,7 +2123,7 @@ index f82118c8e9..b34b202d86 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/SessionUserCommands.cpp b/src/cpp/session/modules/SessionUserCommands.cpp
-index 031eba8574..d10bef6491 100644
+index 70608d5..a9f3e65 100644
 --- a/src/cpp/session/modules/SessionUserCommands.cpp
 +++ b/src/cpp/session/modules/SessionUserCommands.cpp
 @@ -19,7 +19,7 @@
@@ -2123,7 +2144,7 @@ index 031eba8574..d10bef6491 100644
  namespace {
  
 diff --git a/src/cpp/session/modules/build/SessionBuildErrors.cpp b/src/cpp/session/modules/build/SessionBuildErrors.cpp
-index 79de1ab4cf..93dcacec1b 100644
+index f675151..791429b 100644
 --- a/src/cpp/session/modules/build/SessionBuildErrors.cpp
 +++ b/src/cpp/session/modules/build/SessionBuildErrors.cpp
 @@ -17,10 +17,10 @@
@@ -2147,7 +2168,7 @@ index 79de1ab4cf..93dcacec1b 100644
  namespace rstudio {
  namespace session {  
 diff --git a/src/cpp/session/modules/clang/RSourceIndex.cpp b/src/cpp/session/modules/clang/RSourceIndex.cpp
-index 5aebb51ec3..20c192bcff 100644
+index 1562945..2c17448 100644
 --- a/src/cpp/session/modules/clang/RSourceIndex.cpp
 +++ b/src/cpp/session/modules/clang/RSourceIndex.cpp
 @@ -15,8 +15,8 @@
@@ -2169,7 +2190,7 @@ index 5aebb51ec3..20c192bcff 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/connections/ConnectionsIndexer.cpp b/src/cpp/session/modules/connections/ConnectionsIndexer.cpp
-index 6afa4b06f0..f7c58dae36 100644
+index fe2d156..1f9d1a3 100644
 --- a/src/cpp/session/modules/connections/ConnectionsIndexer.cpp
 +++ b/src/cpp/session/modules/connections/ConnectionsIndexer.cpp
 @@ -23,7 +23,7 @@
@@ -2190,7 +2211,7 @@ index 6afa4b06f0..f7c58dae36 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/data/DataViewer.cpp b/src/cpp/session/modules/data/DataViewer.cpp
-index 4851d3bdc0..037f0ee653 100644
+index 820d3ab..230fd04 100644
 --- a/src/cpp/session/modules/data/DataViewer.cpp
 +++ b/src/cpp/session/modules/data/DataViewer.cpp
 @@ -20,9 +20,9 @@
@@ -2213,7 +2234,7 @@ index 4851d3bdc0..037f0ee653 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/panmirror/SessionPanmirrorBibliography.cpp b/src/cpp/session/modules/panmirror/SessionPanmirrorBibliography.cpp
-index 5daea99a5a..1591f3caff 100644
+index 5daea99..1591f3c 100644
 --- a/src/cpp/session/modules/panmirror/SessionPanmirrorBibliography.cpp
 +++ b/src/cpp/session/modules/panmirror/SessionPanmirrorBibliography.cpp
 @@ -15,7 +15,7 @@
@@ -2234,7 +2255,7 @@ index 5daea99a5a..1591f3caff 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/presentation/PresentationLog.cpp b/src/cpp/session/modules/presentation/PresentationLog.cpp
-index 30646406bd..0c59a47520 100644
+index 8bd3f19..971a095 100644
 --- a/src/cpp/session/modules/presentation/PresentationLog.cpp
 +++ b/src/cpp/session/modules/presentation/PresentationLog.cpp
 @@ -16,9 +16,9 @@
@@ -2257,7 +2278,7 @@ index 30646406bd..0c59a47520 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/presentation/SessionPresentation.cpp b/src/cpp/session/modules/presentation/SessionPresentation.cpp
-index 2f671b2d11..d0b67fe433 100644
+index fbf4c44..88978b0 100644
 --- a/src/cpp/session/modules/presentation/SessionPresentation.cpp
 +++ b/src/cpp/session/modules/presentation/SessionPresentation.cpp
 @@ -19,7 +19,7 @@
@@ -2278,7 +2299,7 @@ index 2f671b2d11..d0b67fe433 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/presentation/SlideQuizRenderer.cpp b/src/cpp/session/modules/presentation/SlideQuizRenderer.cpp
-index 50a578523b..3141538584 100644
+index 0bbcda1..b1e2af8 100644
 --- a/src/cpp/session/modules/presentation/SlideQuizRenderer.cpp
 +++ b/src/cpp/session/modules/presentation/SlideQuizRenderer.cpp
 @@ -17,15 +17,16 @@
@@ -2300,7 +2321,7 @@ index 50a578523b..3141538584 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/rmarkdown/NotebookAlternateEngines.cpp b/src/cpp/session/modules/rmarkdown/NotebookAlternateEngines.cpp
-index c8177369f0..7886bce16e 100644
+index 993ced4..912d17a 100644
 --- a/src/cpp/session/modules/rmarkdown/NotebookAlternateEngines.cpp
 +++ b/src/cpp/session/modules/rmarkdown/NotebookAlternateEngines.cpp
 @@ -21,8 +21,8 @@
@@ -2322,7 +2343,7 @@ index c8177369f0..7886bce16e 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/rmarkdown/NotebookCache.cpp b/src/cpp/session/modules/rmarkdown/NotebookCache.cpp
-index ca58de5a21..f6f523938f 100644
+index b34e5da..f99744f 100644
 --- a/src/cpp/session/modules/rmarkdown/NotebookCache.cpp
 +++ b/src/cpp/session/modules/rmarkdown/NotebookCache.cpp
 @@ -20,7 +20,7 @@
@@ -2343,7 +2364,7 @@ index ca58de5a21..f6f523938f 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/rmarkdown/NotebookPlotReplay.cpp b/src/cpp/session/modules/rmarkdown/NotebookPlotReplay.cpp
-index 3f300f916b..2ea8e3aa40 100644
+index 8d56630..d60c5b0 100644
 --- a/src/cpp/session/modules/rmarkdown/NotebookPlotReplay.cpp
 +++ b/src/cpp/session/modules/rmarkdown/NotebookPlotReplay.cpp
 @@ -20,7 +20,7 @@
@@ -2364,7 +2385,7 @@ index 3f300f916b..2ea8e3aa40 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/session/modules/rmarkdown/SessionExecuteChunkOperation.hpp b/src/cpp/session/modules/rmarkdown/SessionExecuteChunkOperation.hpp
-index 73d7cee0fb..73d3b1d8ec 100644
+index faeaa05..0a5aac6 100644
 --- a/src/cpp/session/modules/rmarkdown/SessionExecuteChunkOperation.hpp
 +++ b/src/cpp/session/modules/rmarkdown/SessionExecuteChunkOperation.hpp
 @@ -15,10 +15,10 @@
@@ -2389,7 +2410,7 @@ index 73d7cee0fb..73d3b1d8ec 100644
  namespace session {
  namespace modules {
 diff --git a/src/cpp/session/modules/zotero/ZoteroCollectionsLocal.cpp b/src/cpp/session/modules/zotero/ZoteroCollectionsLocal.cpp
-index 3ea8e09367..cd884d48d4 100644
+index 3ea8e09..cd884d4 100644
 --- a/src/cpp/session/modules/zotero/ZoteroCollectionsLocal.cpp
 +++ b/src/cpp/session/modules/zotero/ZoteroCollectionsLocal.cpp
 @@ -15,8 +15,8 @@
@@ -2411,7 +2432,7 @@ index 3ea8e09367..cd884d48d4 100644
  namespace rstudio {
  namespace session {
 diff --git a/src/cpp/shared_core/FilePath.cpp b/src/cpp/shared_core/FilePath.cpp
-index da5dac94a7..7a405fbea9 100644
+index 111c964..5b9a99e 100644
 --- a/src/cpp/shared_core/FilePath.cpp
 +++ b/src/cpp/shared_core/FilePath.cpp
 @@ -45,10 +45,10 @@
@@ -2437,7 +2458,7 @@ index da5dac94a7..7a405fbea9 100644
  namespace core {
  
 diff --git a/src/cpp/shared_core/system/Win32User.cpp b/src/cpp/shared_core/system/Win32User.cpp
-index b023493556..7be5e1bcb0 100644
+index 7da612d..48f83d1 100644
 --- a/src/cpp/shared_core/system/Win32User.cpp
 +++ b/src/cpp/shared_core/system/Win32User.cpp
 @@ -18,13 +18,15 @@
@@ -2457,3 +2478,6 @@ index b023493556..7be5e1bcb0 100644
  namespace rstudio {
  namespace core {
  namespace system {
+-- 
+2.29.2
+
