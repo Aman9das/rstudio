@@ -1,118 +1,118 @@
-From 91996c922569ec440eaed01707c7192ed67b1d2e Mon Sep 17 00:00:00 2001
+From 61003acdb1c1aca2ac957e3d71c1ebfcb22d84a9 Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?I=C3=B1aki=20=C3=9Acar?= <iucar@fedoraproject.org>
-Date: Mon, 25 Jan 2021 15:29:05 +0100
+Date: Mon, 25 Jan 2021 15:46:06 +0100
 Subject: [PATCH] fix build boost 175
 
 ---
- src/cpp/CMakeLists.txt                                   | 1 -
- src/cpp/core/ConfigUtils.cpp                             | 4 +++-
- src/cpp/core/FileLockTests.cpp                           | 4 +++-
- src/cpp/core/FileUtils.cpp                               | 4 +++-
- src/cpp/core/HtmlUtils.cpp                               | 3 +++
- src/cpp/core/file_lock/FileLock.cpp                      | 3 +++
- src/cpp/core/gwt/GwtSymbolMaps.cpp                       | 4 +++-
- src/cpp/core/http/SocketProxy.cpp                        | 4 ++--
- src/cpp/core/http/UriHandler.cpp                         | 4 +++-
- src/cpp/core/include/core/Predicate.hpp                  | 4 +++-
- src/cpp/core/include/core/http/AsyncUriHandler.hpp       | 4 +++-
- src/cpp/core/include/core/http/Message.hpp               | 4 +++-
- src/cpp/core/include/core/json/JsonRpc.hpp               | 4 +++-
- src/cpp/core/include/core/r_util/RSourceIndex.hpp        | 4 +++-
- src/cpp/core/include/core/text/TemplateFilter.hpp        | 4 +++-
- src/cpp/core/markdown/MathJax.cpp                        | 4 +++-
- src/cpp/core/r_util/RActiveSessions.cpp                  | 4 +++-
- src/cpp/core/r_util/RSourceIndex.cpp                     | 4 +++-
- src/cpp/core/r_util/RVersionsPosix.cpp                   | 4 +++-
- src/cpp/core/spelling/HunspellCustomDictionaries.cpp     | 4 +++-
- src/cpp/core/spelling/HunspellDictionaryManager.cpp      | 4 +++-
- src/cpp/core/system/ChildProcessSubprocPollTests.cpp     | 4 +++-
- src/cpp/core/system/Environment.cpp                      | 4 +++-
- src/cpp/core/system/PosixChildProcess.cpp                | 4 +++-
- src/cpp/core/system/PosixChildProcessTracker.cpp         | 4 +++-
- src/cpp/core/system/PosixOutputCapture.cpp               | 4 +++-
- src/cpp/core/system/PosixProcess.cpp                     | 4 +++-
- src/cpp/core/system/PosixSystem.cpp                      | 4 +++-
- src/cpp/core/system/Process.cpp                          | 4 +++-
- src/cpp/core/system/ProcessTests.cpp                     | 4 +++-
- src/cpp/core/system/Win32System.cpp                      | 4 +++-
- src/cpp/core/system/file_monitor/FileMonitor.cpp         | 4 +++-
- src/cpp/core/system/file_monitor/FileMonitorImpl.hpp     | 4 +++-
- src/cpp/core/system/file_monitor/MacFileMonitor.cpp      | 4 +++-
- src/cpp/core/text/DcfParser.cpp                          | 5 +++--
- src/cpp/desktop/DesktopMain.cpp                          | 4 +++-
- src/cpp/desktop/DesktopMainWindow.cpp                    | 3 ++-
- src/cpp/desktop/DesktopSessionLauncher.cpp               | 3 ++-
- src/cpp/desktop/DesktopWin32DetectRHome.cpp              | 3 ++-
- src/cpp/ext/websocketpp/common/functional.hpp            | 4 +++-
- src/cpp/ext/websocketpp/transport/asio/endpoint.hpp      | 4 +++-
- src/cpp/r/RJsonRpc.cpp                                   | 3 ++-
- src/cpp/r/RSexp.cpp                                      | 3 ++-
- src/cpp/r/RSourceManager.cpp                             | 3 ++-
- src/cpp/r/session/RClientState.cpp                       | 3 ++-
- src/cpp/r/session/RConsoleHistory.cpp                    | 3 ++-
- src/cpp/r/session/REmbeddedWin32.cpp                     | 3 ++-
- src/cpp/r/session/RInit.cpp                              | 3 ++-
- src/cpp/r/session/RQuit.cpp                              | 3 ++-
- src/cpp/r/session/RSearchPath.cpp                        | 3 ++-
- src/cpp/r/session/RStdCallbacks.cpp                      | 2 ++
- src/cpp/r/session/graphics/RGraphicsDevice.cpp           | 3 ++-
- src/cpp/r/session/graphics/RGraphicsPlotManager.cpp      | 3 ++-
- .../session/graphics/RGraphicsPlotManipulatorManager.cpp | 3 ++-
- src/cpp/r/session/graphics/RShadowPngGraphicsHandler.cpp | 3 ++-
- src/cpp/session/SessionConsoleProcessSocketTests.cpp     | 9 +++++----
- src/cpp/session/SessionSourceDatabase.cpp                | 3 ++-
- .../include/session/IncrementalFileChangeHandler.hpp     | 4 +++-
- src/cpp/session/include/session/SessionScopes.hpp        | 5 ++++-
- src/cpp/session/modules/SessionAskPass.cpp               | 3 ++-
- src/cpp/session/modules/SessionAskSecret.cpp             | 3 ++-
- src/cpp/session/modules/SessionBreakpoints.cpp           | 3 ++-
- src/cpp/session/modules/SessionCRANMirrors.cpp           | 3 ++-
- src/cpp/session/modules/SessionCodeSearch.cpp            | 3 ++-
- src/cpp/session/modules/SessionCrypto.cpp                | 3 ++-
- src/cpp/session/modules/SessionDependencies.cpp          | 3 ++-
- src/cpp/session/modules/SessionDiagnostics.cpp           | 4 +++-
- src/cpp/session/modules/SessionDiagnosticsTests.cpp      | 4 +++-
- src/cpp/session/modules/SessionDirty.cpp                 | 3 ++-
- src/cpp/session/modules/SessionErrors.cpp                | 3 ++-
- src/cpp/session/modules/SessionFilesListingMonitor.cpp   | 3 ++-
- src/cpp/session/modules/SessionFind.cpp                  | 5 +++--
- src/cpp/session/modules/SessionGraphics.cpp              | 3 ++-
- src/cpp/session/modules/SessionHTMLPreview.cpp           | 9 ++++-----
- src/cpp/session/modules/SessionHistory.cpp               | 3 ++-
- src/cpp/session/modules/SessionLimits.cpp                | 3 ++-
- src/cpp/session/modules/SessionLists.cpp                 | 3 ++-
- src/cpp/session/modules/SessionObjectExplorer.cpp        | 3 ++-
- src/cpp/session/modules/SessionPackages.cpp              | 3 ++-
- src/cpp/session/modules/SessionPath.cpp                  | 3 ++-
- src/cpp/session/modules/SessionProjectTemplate.cpp       | 3 ++-
- src/cpp/session/modules/SessionRAddins.cpp               | 3 ++-
- src/cpp/session/modules/SessionRHooks.cpp                | 3 ++-
- src/cpp/session/modules/SessionRParser.cpp               | 4 +++-
- src/cpp/session/modules/SessionRParser.hpp               | 6 ++++--
- src/cpp/session/modules/SessionRPubs.cpp                 | 3 ++-
- src/cpp/session/modules/SessionReticulate.cpp            | 3 ++-
- src/cpp/session/modules/SessionSVN.cpp                   | 3 ++-
- src/cpp/session/modules/SessionSnippets.cpp              | 4 +++-
- src/cpp/session/modules/SessionSource.cpp                | 3 ++-
- src/cpp/session/modules/SessionThemes.cpp                | 7 ++++---
- src/cpp/session/modules/SessionUpdates.cpp               | 3 ++-
- src/cpp/session/modules/SessionUserCommands.cpp          | 3 ++-
- src/cpp/session/modules/build/SessionBuildErrors.cpp     | 3 ++-
- src/cpp/session/modules/clang/RSourceIndex.cpp           | 3 ++-
- .../session/modules/connections/ConnectionsIndexer.cpp   | 3 ++-
- src/cpp/session/modules/data/DataViewer.cpp              | 3 ++-
- .../modules/panmirror/SessionPanmirrorBibliography.cpp   | 3 ++-
- src/cpp/session/modules/presentation/PresentationLog.cpp | 3 ++-
- .../session/modules/presentation/SessionPresentation.cpp | 3 ++-
- .../session/modules/presentation/SlideQuizRenderer.cpp   | 3 ++-
- .../modules/rmarkdown/NotebookAlternateEngines.cpp       | 3 ++-
- src/cpp/session/modules/rmarkdown/NotebookCache.cpp      | 3 ++-
- src/cpp/session/modules/rmarkdown/NotebookPlotReplay.cpp | 3 ++-
- .../modules/rmarkdown/SessionExecuteChunkOperation.hpp   | 4 +++-
- .../session/modules/zotero/ZoteroCollectionsLocal.cpp    | 3 ++-
- src/cpp/shared_core/FilePath.cpp                         | 6 ++++--
- src/cpp/shared_core/system/Win32User.cpp                 | 4 +++-
- 108 files changed, 271 insertions(+), 119 deletions(-)
+ src/cpp/CMakeLists.txt                                |  1 -
+ src/cpp/core/ConfigUtils.cpp                          |  4 +++-
+ src/cpp/core/FileLockTests.cpp                        |  4 +++-
+ src/cpp/core/FileUtils.cpp                            |  4 +++-
+ src/cpp/core/HtmlUtils.cpp                            |  3 +++
+ src/cpp/core/file_lock/FileLock.cpp                   |  3 +++
+ src/cpp/core/gwt/GwtSymbolMaps.cpp                    |  4 +++-
+ src/cpp/core/http/SocketProxy.cpp                     |  4 ++--
+ src/cpp/core/http/UriHandler.cpp                      |  4 +++-
+ src/cpp/core/include/core/Predicate.hpp               |  4 +++-
+ src/cpp/core/include/core/http/AsyncUriHandler.hpp    |  4 +++-
+ src/cpp/core/include/core/http/Message.hpp            |  4 +++-
+ src/cpp/core/include/core/json/JsonRpc.hpp            |  4 +++-
+ src/cpp/core/include/core/r_util/RSourceIndex.hpp     |  4 +++-
+ src/cpp/core/include/core/text/TemplateFilter.hpp     |  4 +++-
+ src/cpp/core/markdown/MathJax.cpp                     |  4 +++-
+ src/cpp/core/r_util/RActiveSessions.cpp               |  4 +++-
+ src/cpp/core/r_util/RSourceIndex.cpp                  |  4 +++-
+ src/cpp/core/r_util/RVersionsPosix.cpp                |  4 +++-
+ src/cpp/core/spelling/HunspellCustomDictionaries.cpp  |  4 +++-
+ src/cpp/core/spelling/HunspellDictionaryManager.cpp   |  4 +++-
+ src/cpp/core/system/ChildProcessSubprocPollTests.cpp  |  4 +++-
+ src/cpp/core/system/Environment.cpp                   |  4 +++-
+ src/cpp/core/system/PosixChildProcess.cpp             |  4 +++-
+ src/cpp/core/system/PosixChildProcessTracker.cpp      |  4 +++-
+ src/cpp/core/system/PosixOutputCapture.cpp            |  4 +++-
+ src/cpp/core/system/PosixProcess.cpp                  |  4 +++-
+ src/cpp/core/system/PosixSystem.cpp                   |  4 +++-
+ src/cpp/core/system/Process.cpp                       |  4 +++-
+ src/cpp/core/system/ProcessTests.cpp                  |  4 +++-
+ src/cpp/core/system/Win32System.cpp                   |  4 +++-
+ src/cpp/core/system/file_monitor/FileMonitor.cpp      |  4 +++-
+ src/cpp/core/system/file_monitor/FileMonitorImpl.hpp  |  4 +++-
+ src/cpp/core/system/file_monitor/MacFileMonitor.cpp   |  4 +++-
+ src/cpp/core/text/DcfParser.cpp                       |  5 +++--
+ src/cpp/desktop/DesktopMain.cpp                       |  4 +++-
+ src/cpp/desktop/DesktopMainWindow.cpp                 |  3 ++-
+ src/cpp/desktop/DesktopSessionLauncher.cpp            |  3 ++-
+ src/cpp/desktop/DesktopWin32DetectRHome.cpp           |  3 ++-
+ src/cpp/ext/websocketpp/common/functional.hpp         |  4 +++-
+ src/cpp/ext/websocketpp/transport/asio/endpoint.hpp   |  4 +++-
+ src/cpp/r/RJsonRpc.cpp                                |  3 ++-
+ src/cpp/r/RSexp.cpp                                   |  3 ++-
+ src/cpp/r/RSourceManager.cpp                          |  3 ++-
+ src/cpp/r/session/RClientState.cpp                    |  3 ++-
+ src/cpp/r/session/RConsoleHistory.cpp                 |  3 ++-
+ src/cpp/r/session/REmbeddedWin32.cpp                  |  3 ++-
+ src/cpp/r/session/RInit.cpp                           |  3 ++-
+ src/cpp/r/session/RQuit.cpp                           |  3 ++-
+ src/cpp/r/session/RSearchPath.cpp                     |  3 ++-
+ src/cpp/r/session/RStdCallbacks.cpp                   |  2 ++
+ src/cpp/r/session/graphics/RGraphicsDevice.cpp        |  3 ++-
+ src/cpp/r/session/graphics/RGraphicsPlotManager.cpp   |  3 ++-
+ .../graphics/RGraphicsPlotManipulatorManager.cpp      |  3 ++-
+ .../r/session/graphics/RShadowPngGraphicsHandler.cpp  |  3 ++-
+ src/cpp/session/SessionConsoleProcessSocketTests.cpp  | 11 +++++------
+ src/cpp/session/SessionSourceDatabase.cpp             |  3 ++-
+ .../include/session/IncrementalFileChangeHandler.hpp  |  4 +++-
+ src/cpp/session/include/session/SessionScopes.hpp     |  5 ++++-
+ src/cpp/session/modules/SessionAskPass.cpp            |  3 ++-
+ src/cpp/session/modules/SessionAskSecret.cpp          |  3 ++-
+ src/cpp/session/modules/SessionBreakpoints.cpp        |  3 ++-
+ src/cpp/session/modules/SessionCRANMirrors.cpp        |  3 ++-
+ src/cpp/session/modules/SessionCodeSearch.cpp         |  3 ++-
+ src/cpp/session/modules/SessionCrypto.cpp             |  3 ++-
+ src/cpp/session/modules/SessionDependencies.cpp       |  3 ++-
+ src/cpp/session/modules/SessionDiagnostics.cpp        |  4 +++-
+ src/cpp/session/modules/SessionDiagnosticsTests.cpp   |  4 +++-
+ src/cpp/session/modules/SessionDirty.cpp              |  3 ++-
+ src/cpp/session/modules/SessionErrors.cpp             |  3 ++-
+ .../session/modules/SessionFilesListingMonitor.cpp    |  3 ++-
+ src/cpp/session/modules/SessionFind.cpp               |  5 +++--
+ src/cpp/session/modules/SessionGraphics.cpp           |  3 ++-
+ src/cpp/session/modules/SessionHTMLPreview.cpp        |  9 ++++-----
+ src/cpp/session/modules/SessionHistory.cpp            |  3 ++-
+ src/cpp/session/modules/SessionLimits.cpp             |  3 ++-
+ src/cpp/session/modules/SessionLists.cpp              |  3 ++-
+ src/cpp/session/modules/SessionObjectExplorer.cpp     |  3 ++-
+ src/cpp/session/modules/SessionPackages.cpp           |  3 ++-
+ src/cpp/session/modules/SessionPath.cpp               |  3 ++-
+ src/cpp/session/modules/SessionProjectTemplate.cpp    |  3 ++-
+ src/cpp/session/modules/SessionRAddins.cpp            |  3 ++-
+ src/cpp/session/modules/SessionRHooks.cpp             |  3 ++-
+ src/cpp/session/modules/SessionRParser.cpp            |  4 +++-
+ src/cpp/session/modules/SessionRParser.hpp            |  6 ++++--
+ src/cpp/session/modules/SessionRPubs.cpp              |  3 ++-
+ src/cpp/session/modules/SessionReticulate.cpp         |  3 ++-
+ src/cpp/session/modules/SessionSVN.cpp                |  3 ++-
+ src/cpp/session/modules/SessionSnippets.cpp           |  4 +++-
+ src/cpp/session/modules/SessionSource.cpp             |  3 ++-
+ src/cpp/session/modules/SessionThemes.cpp             |  7 ++++---
+ src/cpp/session/modules/SessionUpdates.cpp            |  3 ++-
+ src/cpp/session/modules/SessionUserCommands.cpp       |  3 ++-
+ src/cpp/session/modules/build/SessionBuildErrors.cpp  |  3 ++-
+ src/cpp/session/modules/clang/RSourceIndex.cpp        |  3 ++-
+ .../modules/connections/ConnectionsIndexer.cpp        |  3 ++-
+ src/cpp/session/modules/data/DataViewer.cpp           |  3 ++-
+ .../panmirror/SessionPanmirrorBibliography.cpp        |  3 ++-
+ .../session/modules/presentation/PresentationLog.cpp  |  3 ++-
+ .../modules/presentation/SessionPresentation.cpp      |  3 ++-
+ .../modules/presentation/SlideQuizRenderer.cpp        |  3 ++-
+ .../modules/rmarkdown/NotebookAlternateEngines.cpp    |  3 ++-
+ src/cpp/session/modules/rmarkdown/NotebookCache.cpp   |  3 ++-
+ .../session/modules/rmarkdown/NotebookPlotReplay.cpp  |  3 ++-
+ .../rmarkdown/SessionExecuteChunkOperation.hpp        |  4 +++-
+ .../session/modules/zotero/ZoteroCollectionsLocal.cpp |  3 ++-
+ src/cpp/shared_core/FilePath.cpp                      |  6 ++++--
+ src/cpp/shared_core/system/Win32User.cpp              |  4 +++-
+ 108 files changed, 271 insertions(+), 121 deletions(-)
 
 diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
 index df54994..f6166c7 100644
@@ -1275,7 +1275,7 @@ index 1400980..df64be1 100644
  namespace rstudio {
  namespace r {
 diff --git a/src/cpp/session/SessionConsoleProcessSocketTests.cpp b/src/cpp/session/SessionConsoleProcessSocketTests.cpp
-index e103100..0a42e96 100644
+index e103100..cfd50b7 100644
 --- a/src/cpp/session/SessionConsoleProcessSocketTests.cpp
 +++ b/src/cpp/session/SessionConsoleProcessSocketTests.cpp
 @@ -16,11 +16,11 @@
@@ -1299,7 +1299,16 @@ index e103100..0a42e96 100644
  
  namespace {
  
-@@ -245,13 +246,13 @@ public:
+@@ -226,8 +227,6 @@ public:
+ 
+    bool connectToServer()
+    {
+-      using websocketpp::lib::placeholders::_1;
+-      using websocketpp::lib::placeholders::_2;
+       using websocketpp::lib::bind;
+ 
+       try {
+@@ -245,13 +244,13 @@ public:
           // Register our message handler
           client_.set_message_handler(bind(&SocketClient::on_message,
                                            SocketClient::shared_from_this(),
