@@ -4,24 +4,11 @@ Date: Sun, 13 Dec 2020 15:09:23 +0100
 Subject: [PATCH 1/2] fix building with boost 1.75
 
 ---
- src/cpp/CMakeLists.txt              | 1 -
  src/cpp/core/HtmlUtils.cpp          | 3 +++
  src/cpp/core/file_lock/FileLock.cpp | 3 +++
  src/cpp/r/session/RStdCallbacks.cpp | 2 ++
  4 files changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
-index 18a951fb83..fb16f75b32 100644
---- a/src/cpp/CMakeLists.txt
-+++ b/src/cpp/CMakeLists.txt
-@@ -35,7 +35,6 @@ include("${CMAKE_CURRENT_SOURCE_DIR}/../../CMakeGlobals.txt")
- 
- # global directives
- add_definitions(-DBOOST_ENABLE_ASSERT_HANDLER)
--add_definitions(-DBOOST_BIND_GLOBAL_PLACEHOLDERS)
- 
- # explicitly do not use new c++ 11 features for websocketpp
- # they currently do not work with our source
 diff --git a/src/cpp/core/HtmlUtils.cpp b/src/cpp/core/HtmlUtils.cpp
 index c0ffb19f42..ddd28a008e 100644
 --- a/src/cpp/core/HtmlUtils.cpp
