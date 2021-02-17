@@ -32,7 +32,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -56,6 +56,7 @@ Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 # Node dependencies to build visual editor (use nodejs-bundler.sh)
 Source1:        %{rstudio_visual_editor}-nm.tgz
 Source2:        %{rstudio_visual_editor}-bundled-licenses.txt
+Source3:        %{name}.metainfo.xml
 # Unbundle mathjax, pandoc, hunspell dictionaries, qtsingleapplication
 Patch0:         0000-unbundle-dependencies-common.patch
 Patch1:         0001-unbundle-qtsingleapplication.patch
@@ -94,6 +95,7 @@ BuildRequires:  pkgconfig(Qt5XmlPatterns)
 BuildRequires:  qtsingleapplication-qt5-devel
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  desktop-file-utils
+BuildRequires:  libappstream-glib
 Suggests:       rstudio-desktop
 %endif
 Suggests:       rstudio-server
@@ -212,9 +214,12 @@ for bin in %{name}-server rserver rserver-pam; do
     ln -s %{_libexecdir}/%{name}/bin/${bin} %{buildroot}%{_bindir}/${bin}
 done
 
-# validate .desktop file
+# validate .desktop and .metainfo.xml files
 %ifarch %{qt5_qtwebengine_arches}
 desktop-file-validate %{buildroot}/%{_datadir}/applications/%{name}.desktop
+mkdir -p %{buildroot}%{_metainfodir}
+install -m 0644 %{SOURCE3} %{buildroot}%{_metainfodir}/
+appstream-util validate-relax --nonet %{buildroot}%{_metainfodir}/%{name}.metainfo.xml
 %endif
 
 # create required directories for rstudio-server (according to INSTALL)
@@ -283,6 +288,9 @@ exit 0
 %postun server
 %systemd_postun_with_restart %{name}-server.service
 
+%triggerun server -- %{name}-server
+chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
+
 %files
 %license COPYING NOTICE %{rstudio_visual_editor}-bundled-licenses.txt
 %doc README.md
@@ -310,6 +318,7 @@ exit 0
 %{_datadir}/icons/hicolor/*/mimetypes/*
 %{_datadir}/mime/packages/%{name}.xml
 %{_datadir}/pixmaps/%{name}.png
+%{_metainfodir}/%{name}.metainfo.xml
 %endif
 
 %files server
@@ -327,6 +336,10 @@ exit 0
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed Feb 17 2021 Iñaki Úcar <iucar@fedoraproject.org> - 1.4.1103-4
+- Add metainfo.xml file (#1928992)
+- Fix /var/lib/rstudio-server ownership
+
 * Wed Jan 27 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.1103-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_34_Mass_Rebuild
 
