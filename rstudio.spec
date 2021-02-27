@@ -14,7 +14,7 @@
 %global bundled_gsllite_version     0.34.0
 %global bundled_ace_version         1.4.5
 %global bundled_datatables_version  1.10.4
-%global bundled_jquery_version      3.4.0
+%global bundled_jquery_version      3.5.1
 %global bundled_pdfjs_version       1.3.158
 %global bundled_revealjs_version    2.4.0
 %global bundled_jsbn_version        1.1
@@ -27,12 +27,12 @@
 %global rstudio_visual_editor       panmirror-0.1.0
 %global rstudio_version_major       1
 %global rstudio_version_minor       4
-%global rstudio_version_patch       1103
-%global rstudio_git_revision_hash   458706c38764ec79d06ef1214acf07af87ef5795
+%global rstudio_version_patch       1106
+%global rstudio_git_revision_hash   2389bc246c7946a8eb2f1a14e5a822bd5f6e1159
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        4%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -84,6 +84,7 @@ BuildRequires:  pkgconfig(systemd)
 BuildRequires:  pkgconfig(uuid)
 BuildRequires:  pkgconfig(openssl)
 BuildRequires:  pkgconfig(websocketpp)
+BuildRequires:  pkgconfig(catch2)
 %ifarch %{qt5_qtwebengine_arches}
 BuildRequires:  pkgconfig(Qt5WebKit)
 BuildRequires:  pkgconfig(Qt5Location)
@@ -171,6 +172,8 @@ cp %{SOURCE2} .
 rm -rf src/cpp/desktop/3rdparty src/cpp/ext/websocketpp
 ln -sf %{_includedir}/rapidxml.h src/cpp/core/include/core/rapidxml/rapidxml.hpp
 ln -sf %{_includedir}/websocketpp src/cpp/ext/websocketpp
+rm -rf src/cpp/tests/cpp/tests/vendor
+ln -sf %{_includedir}/catch2 src/cpp/tests/cpp/tests/vendor
 
 # don't include gwt_build in ALL to avoid recompilation
 sed -i 's@gwt_build ALL@gwt_build@g' src/gwt/CMakeLists.txt
@@ -336,6 +339,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Sat Feb 27 2021 Iñaki Úcar <iucar@fedoraproject.org> - 1.4.1106-1
+- Update to 1.4.1106
+
 * Wed Feb 17 2021 Iñaki Úcar <iucar@fedoraproject.org> - 1.4.1103-4
 - Add metainfo.xml file (#1928992)
 - Fix /var/lib/rstudio-server ownership

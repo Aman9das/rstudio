@@ -23,7 +23,7 @@ index 9b6017f..d1f3b3b 100644
 -if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/mathjax-27")
 -  message(FATAL_ERROR "Mathjax 2.7 not found (re-run install-dependencies script to install)")
 -endif()
--set(PANDOC_VERSION "2.11.2" CACHE INTERNAL "Pandoc version")
+-set(PANDOC_VERSION "2.11.4" CACHE INTERNAL "Pandoc version")
 -if(NOT EXISTS "${RSTUDIO_DEPENDENCIES_DIR}/common/pandoc/${PANDOC_VERSION}")
 -  message(FATAL_ERROR "pandoc ${PANDOC_VERSION} not found (re-run install-dependencies script to install)")
 -endif()
