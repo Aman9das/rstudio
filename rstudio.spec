@@ -4,7 +4,6 @@
 %global bundled_elemental2_version  1.0.0
 %global bundled_junit_version       4.9b3
 %global bundled_guice_version       3.0
-%global bundled_corejs_version      3.6.4
 %global bundled_aopalliance_version 1.0
 %global bundled_rapidjson_version   5cd62c2
 %global bundled_treehh_version      2.81
@@ -27,12 +26,12 @@
 %global rstudio_visual_editor       panmirror-0.1.0
 %global rstudio_version_major       1
 %global rstudio_version_minor       4
-%global rstudio_version_patch       1106
-%global rstudio_git_revision_hash   2389bc246c7946a8eb2f1a14e5a822bd5f6e1159
+%global rstudio_version_patch       1717
+%global rstudio_git_revision_hash   df86b69ebdf62f1a9ed51af59c168572677541f1
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -66,8 +65,6 @@ Patch2:         0002-fix-rstudio-exec-path.patch
 Patch3:         0003-fix-resources-path.patch
 # Use system-provided nodejs binary
 Patch4:         0004-use-system-node.patch
-# https://github.com/rstudio/rstudio/pull/8606
-Patch5:         0005-fix-build-boost-175.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-1.8.0-openjdk-devel, R-core-devel
@@ -78,6 +75,7 @@ BuildRequires:  lato-fonts, glyphography-newscycle-fonts
 BuildRequires:  boost-devel
 BuildRequires:  soci-postgresql-devel, soci-sqlite3-devel
 BuildRequires:  rapidxml-devel
+BuildRequires:  yaml-cpp-devel
 BuildRequires:  pam-devel
 BuildRequires:  systemd
 BuildRequires:  pkgconfig(systemd)
@@ -112,7 +110,6 @@ Provides:       bundled(gin) = %{bundled_gin_version}
 Provides:       bundled(elemental2) = %{bundled_elemental2_version}
 Provides:       bundled(junit) = %{bundled_junit_version}
 Provides:       bundled(guice) = %{bundled_guice_version}
-Provides:       bundled(nodejs-core-js) = %{bundled_corejs_version}
 Provides:       bundled(aopalliance) = %{bundled_aopalliance_version}
 Provides:       bundled(rapidjson-devel) = %{bundled_rapidjson_version}
 Provides:       bundled(tree-hh-devel) = %{bundled_treehh_version}
@@ -200,6 +197,7 @@ export PACKAGE_OS=$(cat /etc/redhat-release)
     -DCMAKE_BUILD_TYPE=Release \
     -DRSTUDIO_USE_SYSTEM_SOCI=Yes \
     -DRSTUDIO_USE_SYSTEM_BOOST=Yes \
+    -DRSTUDIO_USE_SYSTEM_YAML_CPP=Yes \
     -DBOOST_ROOT=%{_prefix} -DBOOST_LIBRARYDIR=%{_lib} \
     -DCMAKE_INSTALL_PREFIX=%{_libexecdir}/%{name}
 %make_build -C build # ALL
@@ -339,6 +337,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Sat Jun 05 2021 Iñaki Úcar <iucar@fedoraproject.org> - 1.4.1717-1
+- Update to 1.4.1717
+
 * Wed Mar 31 2021 Jonathan Wakely <jwakely@redhat.com> - 1.4.1106-3
 - Rebuilt for removed libstdc++ symbols (#1937698)
 
