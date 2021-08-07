@@ -31,7 +31,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -337,6 +337,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Sat Aug 07 2021 Jonathan Wakely <jwakely@redhat.com> - 1.4.1717-3
+- Rebuilt for Boost 1.76
+
 * Fri Jul 23 2021 Fedora Release Engineering <releng@fedoraproject.org> - 1.4.1717-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_35_Mass_Rebuild
 
