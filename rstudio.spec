@@ -31,7 +31,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -69,7 +69,7 @@ Patch4:         0004-use-system-node.patch
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-1.8.0-openjdk-devel, R-core-devel
 BuildRequires:  nodejs-devel
-BuildRequires:  pandoc, pandoc-citeproc
+BuildRequires:  pandoc
 BuildRequires:  mathjax
 BuildRequires:  lato-fonts, glyphography-newscycle-fonts
 BuildRequires:  boost-devel
@@ -100,7 +100,7 @@ Suggests:       rstudio-desktop
 Suggests:       rstudio-server
 Recommends:     git
 Requires:       hunspell
-Requires:       pandoc, pandoc-citeproc
+Requires:       pandoc
 Requires:       mathjax
 Requires:       lato-fonts, glyphography-newscycle-fonts
 
@@ -242,7 +242,6 @@ install -m 0644 \
 pushd %{buildroot}%{_libexecdir}/%{name}/bin
     mkdir -p pandoc
     ln -sf %{_bindir}/pandoc pandoc/pandoc
-    ln -sf %{_bindir}/pandoc-citeproc pandoc/pandoc-citeproc
 popd
 pushd %{buildroot}%{_libexecdir}/%{name}/resources
     ln -sf %{_datadir}/myspell dictionaries
@@ -337,6 +336,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed Aug 11 2021 Iñaki Úcar <iucar@fedoraproject.org> - 1.4.1717-4
+- Remove dependency on pandoc-citeproc
+
 * Sat Aug 07 2021 Jonathan Wakely <jwakely@redhat.com> - 1.4.1717-3
 - Rebuilt for Boost 1.76
 
@@ -369,7 +371,7 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 * Sat Jan 16 2021 Iñaki Úcar <iucar@fedoraproject.org> - 1.4.1103-1
 - Update to 1.4.1103
 
-* Mon Nov 30 2020 Iñaki Úcar <iucar@fedoraproject.org> 1.3.1093-3
+* Mon Nov 30 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.1093-3
 - https://fedoraproject.org/wiki/Changes/Remove_make_from_BuildRoot
 
 * Wed Nov 11 2020 Iñaki Úcar <iucar@fedoraproject.org> - 1.3.1093-2
