@@ -31,7 +31,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -336,6 +336,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Tue Sep 14 2021 Sahana Prasad <sahana@redhat.com> - 1.4.1717-5
+- Rebuilt with OpenSSL 3.0.0
+
 * Wed Aug 11 2021 Iñaki Úcar <iucar@fedoraproject.org> - 1.4.1717-4
 - Remove dependency on pandoc-citeproc
 
