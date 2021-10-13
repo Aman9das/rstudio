@@ -1,4 +1,4 @@
-%global bundled_gwt_version         2.8.2
+%global bundled_gwt_version         2.9.0
 %global bundled_websockets_version  1.0.4
 %global bundled_gin_version         2.1.2
 %global bundled_elemental2_version  1.0.0
@@ -24,14 +24,16 @@
 %global bundled_focusvis_version    5.0.2
 %global mathjax_short               27
 %global rstudio_visual_editor       panmirror-0.1.0
-%global rstudio_version_major       1
-%global rstudio_version_minor       4
-%global rstudio_version_patch       1717
-%global rstudio_git_revision_hash   df86b69ebdf62f1a9ed51af59c168572677541f1
+%global rstudio_version_major       2021
+%global rstudio_version_minor       09
+%global rstudio_version_patch       0
+%global rstudio_version_suffix      351
+%global rstudio_git_revision_hash   e1c360e163eaa59d7e2fe4ed1b1c8371cf3344db
+%global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
 
 Name:           rstudio
-Version:        %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
-Release:        5%{?dist}
+Version:        %{rstudio_version}+%{rstudio_version_suffix}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -51,7 +53,7 @@ Summary:        RStudio base package
 # Public:       aopalliance
 License:        AGPLv3 and LGPLv2+ and ASL 2.0 and MIT and BSD and ISC and W3C and MPLv1.1 and CPL and CC-BY and Public Domain
 URL:            https://github.com/%{name}/%{name}
-Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
 # Node dependencies to build visual editor (use nodejs-bundler.sh)
 Source1:        %{rstudio_visual_editor}-nm.tgz
 Source2:        %{rstudio_visual_editor}-bundled-licenses.txt
@@ -67,7 +69,7 @@ Patch3:         0003-fix-resources-path.patch
 Patch4:         0004-use-system-node.patch
 
 BuildRequires:  make, cmake, ant
-BuildRequires:  gcc-c++, java-1.8.0-openjdk-devel, R-core-devel
+BuildRequires:  gcc-c++, java-devel, R-core-devel
 BuildRequires:  nodejs-devel
 BuildRequires:  pandoc
 BuildRequires:  mathjax
@@ -158,7 +160,7 @@ Requires(pre):  shadow-utils
 This package provides the Server version, a browser-based interface to the RStudio IDE.
 
 %prep
-%autosetup -p1
+%autosetup -p1 -n %{name}-%{rstudio_version}-%{rstudio_version_suffix}
 tar -xf %{SOURCE1}
 mkdir src/gwt/panmirror/src/editor/node_modules
 cp -r node_modules_prod/* src/gwt/panmirror/src/editor/node_modules
@@ -183,6 +185,7 @@ sed -i '/StackOverflowError/c\<jvmarg value="-Xss8M"/>' src/gwt/build.xml
 export RSTUDIO_VERSION_MAJOR=%{rstudio_version_major}
 export RSTUDIO_VERSION_MINOR=%{rstudio_version_minor}
 export RSTUDIO_VERSION_PATCH=%{rstudio_version_patch}
+export RSTUDIO_VERSION_SUFFIX=%{rstudio_version_suffix}
 export RSTUDIO_GIT_REVISION_HASH=%{rstudio_git_revision_hash}
 export GIT_COMMIT=%{rstudio_git_revision_hash}
 export PACKAGE_OS=$(cat /etc/redhat-release)
@@ -201,7 +204,6 @@ export PACKAGE_OS=$(cat /etc/redhat-release)
     -DBOOST_ROOT=%{_prefix} -DBOOST_LIBRARYDIR=%{_lib} \
     -DCMAKE_INSTALL_PREFIX=%{_libexecdir}/%{name}
 %make_build -C build # ALL
-export JAVA_HOME=/usr/lib/jvm/java-1.8.0-openjdk
 %make_build -C build gwt_build
 
 %install
@@ -329,13 +331,16 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %{_libexecdir}/%{name}/bin/rserver
 %{_libexecdir}/%{name}/bin/rserver-pam
 %{_libexecdir}/%{name}/bin/%{name}-server
-%dir %{_libexecdir}/%{name}/db
-%{_libexecdir}/%{name}/db/20200226141952248123456_AddRevokedCookie.sql
+%{_libexecdir}/%{name}/db
 %dir %{_sharedstatedir}/%{name}-server
 %{_unitdir}/%{name}-server.service
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Tue Oct 12 2021 Iñaki Úcar <iucar@fedoraproject.org> - 2021.09.0+351-1
+- Update to 2021.09.0+351 (new versioning scheme)
+- Build with JDK-11
+
 * Tue Sep 14 2021 Sahana Prasad <sahana@redhat.com> - 1.4.1717-5
 - Rebuilt with OpenSSL 3.0.0
 
