@@ -30,10 +30,13 @@
 %global rstudio_version_suffix      351
 %global rstudio_git_revision_hash   e1c360e163eaa59d7e2fe4ed1b1c8371cf3344db
 %global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
+# Do not build non-lto objects, as that may result in
+# memory exhaustion by the linker.
+%global optflags                    %(echo '%{optflags}' | sed -e 's!-ffat-lto-objects!-fno-fat-lto-objects!g')
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -337,6 +340,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed Oct 13 2021 Björn Esser <besser82@fedoraproject.org> - 2021.09.0+351-2
+- Do not build non-lto objects to avoid memory exhaustion by the linker
+
 * Tue Oct 12 2021 Iñaki Úcar <iucar@fedoraproject.org> - 2021.09.0+351-1
 - Update to 2021.09.0+351 (new versioning scheme)
 - Build with JDK-11
