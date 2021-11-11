@@ -26,9 +26,9 @@
 %global rstudio_visual_editor       panmirror-0.1.0
 %global rstudio_version_major       2021
 %global rstudio_version_minor       09
-%global rstudio_version_patch       0
-%global rstudio_version_suffix      351
-%global rstudio_git_revision_hash   e1c360e163eaa59d7e2fe4ed1b1c8371cf3344db
+%global rstudio_version_patch       1
+%global rstudio_version_suffix      372
+%global rstudio_git_revision_hash   8b9ced188245155642d024aa3630363df611088a
 %global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
 # Do not build non-lto objects, as that may result in
 # memory exhaustion by the linker.
@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -56,7 +56,7 @@ Summary:        RStudio base package
 # Public:       aopalliance
 License:        AGPLv3 and LGPLv2+ and ASL 2.0 and MIT and BSD and ISC and W3C and MPLv1.1 and CPL and CC-BY and Public Domain
 URL:            https://github.com/%{name}/%{name}
-Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 # Node dependencies to build visual editor (use nodejs-bundler.sh)
 Source1:        %{rstudio_visual_editor}-nm.tgz
 Source2:        %{rstudio_visual_editor}-bundled-licenses.txt
@@ -340,6 +340,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Thu Nov 11 2021 Iñaki Úcar <iucar@fedoraproject.org> - 2021.09.1+372-1
+- Update to 2021.09.1+372
+
 * Wed Oct 13 2021 Björn Esser <besser82@fedoraproject.org> - 2021.09.0+351-2
 - Do not build non-lto objects to avoid memory exhaustion by the linker
 
