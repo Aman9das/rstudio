@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -72,7 +72,7 @@ Patch3:         0003-fix-resources-path.patch
 Patch4:         0004-use-system-node.patch
 
 BuildRequires:  make, cmake, ant
-BuildRequires:  gcc-c++, java-devel, R-core-devel
+BuildRequires:  gcc-c++, java-11-openjdk-devel, R-core-devel
 BuildRequires:  nodejs-devel
 BuildRequires:  pandoc
 BuildRequires:  mathjax
@@ -207,6 +207,7 @@ export PACKAGE_OS=$(cat /etc/redhat-release)
     -DBOOST_ROOT=%{_prefix} -DBOOST_LIBRARYDIR=%{_lib} \
     -DCMAKE_INSTALL_PREFIX=%{_libexecdir}/%{name}
 %make_build -C build # ALL
+export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
 %make_build -C build gwt_build
 
 %install
@@ -340,6 +341,10 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Thu Dec 02 2021 Iñaki Úcar <iucar@fedoraproject.org> - 2021.09.1+372-2
+- Depend specifically on java-11-openjdk-devel
+- Export JAVA_HOME to point to java-11
+
 * Thu Nov 11 2021 Iñaki Úcar <iucar@fedoraproject.org> - 2021.09.1+372-1
 - Update to 2021.09.1+372
 
