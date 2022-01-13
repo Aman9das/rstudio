@@ -26,9 +26,9 @@
 %global rstudio_visual_editor       panmirror-0.1.0
 %global rstudio_version_major       2021
 %global rstudio_version_minor       09
-%global rstudio_version_patch       1
-%global rstudio_version_suffix      372
-%global rstudio_git_revision_hash   8b9ced188245155642d024aa3630363df611088a
+%global rstudio_version_patch       2
+%global rstudio_version_suffix      382
+%global rstudio_git_revision_hash   fc9e217980ee9320126e33cdf334d4f4e105dc4f
 %global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
 # Do not build non-lto objects, as that may result in
 # memory exhaustion by the linker.
@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -341,6 +341,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Thu Jan 13 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2021.09.2+382-1
+- Update to 2021.09.2+382
+
 * Thu Dec 02 2021 Iñaki Úcar <iucar@fedoraproject.org> - 2021.09.1+372-2
 - Depend specifically on java-11-openjdk-devel
 - Export JAVA_HOME to point to java-11
