@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -250,7 +250,7 @@ pushd %{buildroot}%{_libexecdir}/%{name}/bin
     ln -sf %{_bindir}/pandoc pandoc/pandoc
 popd
 pushd %{buildroot}%{_libexecdir}/%{name}/resources
-    ln -sf %{_datadir}/myspell dictionaries
+    ln -sf %{_datadir}/hunspell dictionaries
     ln -sf %{_datadir}/javascript/mathjax mathjax-%{mathjax_short}
     pushd presentation/revealjs/fonts
         for fnt in Lato*.ttf; do
@@ -341,6 +341,10 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Tue Jan 25 2022 Parag Nemade <pnemade AT redhat DOT com> - 2021.09.2+382-3
+- Update hunspell directory path
+  F36 Change https://fedoraproject.org/wiki/Changes/Hunspell_dictionary_dir_change
+
 * Fri Jan 21 2022 Fedora Release Engineering <releng@fedoraproject.org> - 2021.09.2+382-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_36_Mass_Rebuild
 
