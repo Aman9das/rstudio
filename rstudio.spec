@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -341,6 +341,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Sat Feb 05 2022 Jiri Vanek <jvanek@redhat.com> - 2021.09.2+382-4
+- Rebuilt for java-17-openjdk as system jdk
+
 * Tue Jan 25 2022 Parag Nemade <pnemade AT redhat DOT com> - 2021.09.2+382-3
 - Update hunspell directory path
   F36 Change https://fedoraproject.org/wiki/Changes/Hunspell_dictionary_dir_change
