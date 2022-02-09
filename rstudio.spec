@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        4%{?dist}
+Release:        5%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -180,7 +180,7 @@ ln -sf %{_includedir}/catch2 src/cpp/tests/cpp/tests/vendor
 # don't include gwt_build in ALL to avoid recompilation
 sed -i 's@gwt_build ALL@gwt_build@g' src/gwt/CMakeLists.txt
 # increase Java stack size
-%ifarch s390 s390x
+%ifarch s390 s390x i686
 sed -i '/StackOverflowError/c\<jvmarg value="-Xss8M"/>' src/gwt/build.xml
 %endif
 
@@ -341,6 +341,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed Feb 09 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2021.09.2+382-5
+- Increase Java stack size for i686
+
 * Sat Feb 05 2022 Jiri Vanek <jvanek@redhat.com> - 2021.09.2+382-4
 - Rebuilt for java-17-openjdk as system jdk
 
