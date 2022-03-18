@@ -24,11 +24,11 @@
 %global bundled_focusvis_version    5.0.2
 %global mathjax_short               27
 %global rstudio_visual_editor       panmirror-0.1.0
-%global rstudio_version_major       2021
-%global rstudio_version_minor       09
-%global rstudio_version_patch       2
-%global rstudio_version_suffix      382
-%global rstudio_git_revision_hash   fc9e217980ee9320126e33cdf334d4f4e105dc4f
+%global rstudio_version_major       2022
+%global rstudio_version_minor       02
+%global rstudio_version_patch       0
+%global rstudio_version_suffix      443
+%global rstudio_git_revision_hash   9f7969398b90468440a501cf065295d9050bb776
 %global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
 # Do not build non-lto objects, as that may result in
 # memory exhaustion by the linker.
@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        5%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -201,6 +201,7 @@ export PACKAGE_OS=$(cat /etc/redhat-release)
     -DRSTUDIO_TARGET=Server \
 %endif
     -DCMAKE_BUILD_TYPE=Release \
+    -DQUARTO_ENABLED=FALSE \
     -DRSTUDIO_USE_SYSTEM_SOCI=Yes \
     -DRSTUDIO_USE_SYSTEM_BOOST=Yes \
     -DRSTUDIO_USE_SYSTEM_YAML_CPP=Yes \
@@ -341,6 +342,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Fri Mar 18 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.0+443-1
+- Update to 2022.02.0+443
+
 * Wed Feb 09 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2021.09.2+382-5
 - Increase Java stack size for i686
 
