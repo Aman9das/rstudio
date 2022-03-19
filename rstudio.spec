@@ -179,10 +179,6 @@ ln -sf %{_includedir}/catch2 src/cpp/tests/cpp/tests/vendor
 
 # don't include gwt_build in ALL to avoid recompilation
 sed -i 's@gwt_build ALL@gwt_build@g' src/gwt/CMakeLists.txt
-# increase Java stack size
-%ifarch s390 s390x i686
-sed -i '/StackOverflowError/c\<jvmarg value="-Xss8M"/>' src/gwt/build.xml
-%endif
 
 %build
 export RSTUDIO_VERSION_MAJOR=%{rstudio_version_major}
@@ -195,11 +191,12 @@ export PACKAGE_OS=$(cat /etc/redhat-release)
 %cmake -B build \
 %ifarch %{qt5_qtwebengine_arches}
     -DRSTUDIO_TARGET=Desktop \
-    -DRSTUDIO_SERVER=TRUE \
+    -DRSTUDIO_DESKTOP=TRUE \
     -DQT_QMAKE_EXECUTABLE=%{_bindir}/qmake-qt5 \
 %else
     -DRSTUDIO_TARGET=Server \
 %endif
+    -DRSTUDIO_SERVER=TRUE \
     -DCMAKE_BUILD_TYPE=Release \
     -DQUARTO_ENABLED=FALSE \
     -DRSTUDIO_USE_SYSTEM_SOCI=Yes \
