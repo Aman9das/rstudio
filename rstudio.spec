@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -70,6 +70,8 @@ Patch2:         0002-fix-rstudio-exec-path.patch
 Patch3:         0003-fix-resources-path.patch
 # Use system-provided nodejs binary
 Patch4:         0004-use-system-node.patch
+# Disable quarto, stick to pandoc
+Patch5:         0005-disable-quarto.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-11-openjdk-devel, R-core-devel
@@ -198,7 +200,6 @@ export PACKAGE_OS=$(cat /etc/redhat-release)
 %endif
     -DRSTUDIO_SERVER=TRUE \
     -DCMAKE_BUILD_TYPE=Release \
-    -DQUARTO_ENABLED=FALSE \
     -DRSTUDIO_USE_SYSTEM_SOCI=Yes \
     -DRSTUDIO_USE_SYSTEM_BOOST=Yes \
     -DRSTUDIO_USE_SYSTEM_YAML_CPP=Yes \
@@ -339,6 +340,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Tue Mar 22 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.0+443-2
+- Disable Quarto
+
 * Fri Mar 18 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.0+443-1
 - Update to 2022.02.0+443
 
