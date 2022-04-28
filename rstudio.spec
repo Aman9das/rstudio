@@ -26,9 +26,9 @@
 %global rstudio_visual_editor       panmirror-0.1.0
 %global rstudio_version_major       2022
 %global rstudio_version_minor       02
-%global rstudio_version_patch       1
-%global rstudio_version_suffix      461
-%global rstudio_git_revision_hash   8aaa5d470dd82d615130dbf663ace5c7992d48e3
+%global rstudio_version_patch       2
+%global rstudio_version_suffix      485
+%global rstudio_git_revision_hash   8acbd38b0d4ca3c86c570cf4112a8180c48cc6fb
 %global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
 # Do not build non-lto objects, as that may result in
 # memory exhaustion by the linker.
@@ -340,6 +340,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Thu Apr 28 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.2+485-1
+- Update to 2022.02.2+485
+
 * Wed Mar 23 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.1+461-1
 - Update to 2022.02.1+461
 
