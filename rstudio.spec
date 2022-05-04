@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -340,6 +340,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed May 04 2022 Thomas Rodgers <trodgers@redhat.com> - 2022.02.2+485-2
+- Rebuilt for Boost 1.78
+
 * Thu Apr 28 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.2+485-1
 - Update to 2022.02.2+485
 
