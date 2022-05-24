@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -181,6 +181,10 @@ ln -sf %{_includedir}/catch2 src/cpp/tests/cpp/tests/vendor
 
 # don't include gwt_build in ALL to avoid recompilation
 sed -i 's@gwt_build ALL@gwt_build@g' src/gwt/CMakeLists.txt
+
+# remove custom stack-protector definition
+# https://github.com/rstudio/rstudio/pull/11278
+sed -i '/stack-protector/d' src/cpp/CMakeLists.txt
 
 %build
 export RSTUDIO_VERSION_MAJOR=%{rstudio_version_major}
@@ -340,6 +344,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Tue May 24 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.2+485-3
+- Remove custom stack-protector definition
+
 * Wed May 04 2022 Thomas Rodgers <trodgers@redhat.com> - 2022.02.2+485-2
 - Rebuilt for Boost 1.78
 
