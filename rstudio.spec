@@ -26,9 +26,9 @@
 %global rstudio_visual_editor       panmirror-0.1.0
 %global rstudio_version_major       2022
 %global rstudio_version_minor       02
-%global rstudio_version_patch       2
-%global rstudio_version_suffix      485
-%global rstudio_git_revision_hash   8acbd38b0d4ca3c86c570cf4112a8180c48cc6fb
+%global rstudio_version_patch       3
+%global rstudio_version_suffix      492
+%global rstudio_git_revision_hash   aaa7a713740a0767e6476f025b85cc57769e3283
 %global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
 # Do not build non-lto objects, as that may result in
 # memory exhaustion by the linker.
@@ -36,7 +36,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 
 # AGPLv3:       RStudio, hunspell, tree.hh
@@ -72,6 +72,9 @@ Patch3:         0003-fix-resources-path.patch
 Patch4:         0004-use-system-node.patch
 # Disable quarto, stick to pandoc
 Patch5:         0005-disable-quarto.patch
+# https://github.com/rstudio/rstudio/issues/9854
+# We don't need this with our version of QtWebEngine
+Patch6:         0006-do-not-disable-seccomp-filter-sandbox.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-11-openjdk-devel, R-core-devel
@@ -344,6 +347,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Fri Jun 03 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.3+492-1
+- Update to 2022.02.3+492
+
 * Tue May 24 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.2+485-3
 - Remove custom stack-protector definition
 
