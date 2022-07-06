@@ -36,8 +36,9 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
+ExclusiveArch:  %{java_arches}
 
 # AGPLv3:       RStudio, hunspell, tree.hh
 # LGPLv2+:      Stan Ace Mode
@@ -347,6 +348,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Wed Jul 06 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.3+492-2
+- Add java_arches as ExclusiveArch (#2104098)
+
 * Fri Jun 03 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.3+492-1
 - Update to 2022.02.3+492
 
