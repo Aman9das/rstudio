@@ -1,14 +1,14 @@
-From 58133b08c006c8f315dacb841f90823eec4b7e48 Mon Sep 17 00:00:00 2001
+From 2008b179c5b5cd0442c9954531d1c4dd952ad1ab Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?I=C3=B1aki=20=C3=9Acar?= <iucar@fedoraproject.org>
-Date: Fri, 18 Mar 2022 20:18:08 +0100
+Date: Fri, 8 Jul 2022 15:27:43 +0200
 Subject: [PATCH] unbundle dependencies common
 
 ---
- src/cpp/session/CMakeLists.txt | 52 ----------------------------------
- 1 file changed, 52 deletions(-)
+ src/cpp/session/CMakeLists.txt | 58 ----------------------------------
+ 1 file changed, 58 deletions(-)
 
 diff --git a/src/cpp/session/CMakeLists.txt b/src/cpp/session/CMakeLists.txt
-index 1dfc977..07c742c 100644
+index 2e58351..aa9625b 100644
 --- a/src/cpp/session/CMakeLists.txt
 +++ b/src/cpp/session/CMakeLists.txt
 @@ -64,28 +64,6 @@ else()
@@ -40,7 +40,7 @@ index 1dfc977..07c742c 100644
  # verify embedded packages are available
  foreach(PKG ${RSTUDIO_EMBEDDED_PACKAGES})
     file(GLOB PKG_FILES "${RSTUDIO_DEPENDENCIES_DIR}/common/${PKG}*.tar.gz")
-@@ -664,36 +642,6 @@ if(NOT RSTUDIO_SESSION_WIN32 AND NOT RSESSION_ALTERNATE_BUILD)
+@@ -667,42 +645,6 @@ if(NOT RSTUDIO_SESSION_WIN32 AND NOT RSESSION_ALTERNATE_BUILD)
     install(DIRECTORY "resources/dependencies"
             DESTINATION ${RSTUDIO_INSTALL_SUPPORTING}/resources)
  
@@ -56,13 +56,19 @@ index 1dfc977..07c742c 100644
 -   if(QUARTO_ENABLED)
 -      # install some quarto folders into Resources, as needed
 -      if(APPLE)
--         install(DIRECTORY "${RSTUDIO_DEPENDENCIES_QUARTO_DIR}"
--               DESTINATION "${RSTUDIO_INSTALL_BIN}"
--               USE_SOURCE_PERMISSIONS
--               PATTERN "*/share" EXCLUDE)
--         install(DIRECTORY "${RSTUDIO_DEPENDENCIES_QUARTO_DIR}/share" 
--               DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/quarto"
--               USE_SOURCE_PERMISSIONS)
+-         if (RSTUDIO_ELECTRON)
+-            install(DIRECTORY "${RSTUDIO_DEPENDENCIES_QUARTO_DIR}" 
+-                  DESTINATION "${RSTUDIO_INSTALL_RESOURCES}/app"
+-                  USE_SOURCE_PERMISSIONS)
+-         else()
+-            install(DIRECTORY "${RSTUDIO_DEPENDENCIES_QUARTO_DIR}"
+-                  DESTINATION "${RSTUDIO_INSTALL_BIN}"
+-                  USE_SOURCE_PERMISSIONS
+-                  PATTERN "*/share" EXCLUDE)
+-            install(DIRECTORY "${RSTUDIO_DEPENDENCIES_QUARTO_DIR}/share" 
+-                  DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/quarto"
+-                  USE_SOURCE_PERMISSIONS)
+-         endif()
 -      else()
 -         install(DIRECTORY "${RSTUDIO_DEPENDENCIES_QUARTO_DIR}"
 -               DESTINATION "${RSTUDIO_INSTALL_BIN}"
@@ -78,5 +84,5 @@ index 1dfc977..07c742c 100644
     foreach(PKG ${RSTUDIO_EMBEDDED_PACKAGES})
        file(GLOB PKG_FILES "${RSTUDIO_DEPENDENCIES_DIR}/common/${PKG}*.tar.gz")
 -- 
-2.31.1
+2.34.1
 

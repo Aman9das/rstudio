@@ -25,18 +25,27 @@
 %global mathjax_short               27
 %global rstudio_visual_editor       panmirror-0.1.0
 %global rstudio_version_major       2022
-%global rstudio_version_minor       02
-%global rstudio_version_patch       3
-%global rstudio_version_suffix      492
-%global rstudio_git_revision_hash   aaa7a713740a0767e6476f025b85cc57769e3283
+%global rstudio_version_minor       07
+%global rstudio_version_patch       0
+%global rstudio_version_suffix      548
+%global rstudio_git_revision_hash   34ea3031089fa4e38738a9256d6fa6d70629c822
 %global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
+%global rstudio_flags \
+    export RSTUDIO_VERSION_MAJOR=%{rstudio_version_major} ; \
+    export RSTUDIO_VERSION_MINOR=%{rstudio_version_minor} ; \
+    export RSTUDIO_VERSION_PATCH=%{rstudio_version_patch} ; \
+    export RSTUDIO_VERSION_SUFFIX=+%{rstudio_version_suffix} ; \
+    export RSTUDIO_GIT_REVISION_HASH=%{rstudio_git_revision_hash} ; \
+    export GIT_COMMIT=%{rstudio_git_revision_hash} ; \
+    export PACKAGE_OS=$(cat /etc/redhat-release)
+
 # Do not build non-lto objects, as that may result in
 # memory exhaustion by the linker.
 %global optflags                    %(echo '%{optflags}' | sed -e 's!-ffat-lto-objects!-fno-fat-lto-objects!g')
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        2%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 ExclusiveArch:  %{java_arches}
 
@@ -76,6 +85,8 @@ Patch5:         0005-disable-quarto.patch
 # https://github.com/rstudio/rstudio/issues/9854
 # We don't need this with our version of QtWebEngine
 Patch6:         0006-do-not-disable-seccomp-filter-sandbox.patch
+# https://github.com/rstudio/rstudio/pull/11585
+Patch7:         0007-depend-on-Java-source-files-only.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-11-openjdk-devel, R-core-devel
@@ -183,21 +194,8 @@ ln -sf %{_includedir}/websocketpp src/cpp/ext/websocketpp
 rm -rf src/cpp/tests/cpp/tests/vendor
 ln -sf %{_includedir}/catch2 src/cpp/tests/cpp/tests/vendor
 
-# don't include gwt_build in ALL to avoid recompilation
-sed -i 's@gwt_build ALL@gwt_build@g' src/gwt/CMakeLists.txt
-
-# remove custom stack-protector definition
-# https://github.com/rstudio/rstudio/pull/11278
-sed -i '/stack-protector/d' src/cpp/CMakeLists.txt
-
 %build
-export RSTUDIO_VERSION_MAJOR=%{rstudio_version_major}
-export RSTUDIO_VERSION_MINOR=%{rstudio_version_minor}
-export RSTUDIO_VERSION_PATCH=%{rstudio_version_patch}
-export RSTUDIO_VERSION_SUFFIX=+%{rstudio_version_suffix}
-export RSTUDIO_GIT_REVISION_HASH=%{rstudio_git_revision_hash}
-export GIT_COMMIT=%{rstudio_git_revision_hash}
-export PACKAGE_OS=$(cat /etc/redhat-release)
+%{rstudio_flags}
 %cmake -B build \
 %ifarch %{qt5_qtwebengine_arches}
     -DRSTUDIO_TARGET=Desktop \
@@ -213,11 +211,11 @@ export PACKAGE_OS=$(cat /etc/redhat-release)
     -DRSTUDIO_USE_SYSTEM_YAML_CPP=Yes \
     -DBOOST_ROOT=%{_prefix} -DBOOST_LIBRARYDIR=%{_lib} \
     -DCMAKE_INSTALL_PREFIX=%{_libexecdir}/%{name}
-%make_build -C build # ALL
 export JAVA_HOME=/usr/lib/jvm/java-11-openjdk
-%make_build -C build gwt_build
+%make_build -C build # ALL
 
 %install
+%{rstudio_flags}
 %make_install -C build
 # expose symlinks in /usr/bin
 install -d -m 0755 %{buildroot}%{_bindir}
@@ -348,6 +346,11 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Fri Jul 08 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.07.0+548-1
+- Update to 2022.07.0+548
+- Define rstudio_flags as global macro
+- No need to separate gwt_build anymore https://github.com/rstudio/rstudio/pull/9885
+
 * Wed Jul 06 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.02.3+492-2
 - Add java_arches as ExclusiveArch (#2104098)
 
