@@ -45,7 +45,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
 ExclusiveArch:  %{java_arches}
 
@@ -97,22 +97,22 @@ BuildRequires:  lato-fonts, glyphography-newscycle-fonts
 BuildRequires:  boost-devel
 BuildRequires:  soci-postgresql-devel, soci-sqlite3-devel
 BuildRequires:  rapidxml-devel
-BuildRequires:  yaml-cpp-devel
-BuildRequires:  pam-devel
-BuildRequires:  systemd
+BuildRequires:  pkgconfig(pam)
 BuildRequires:  pkgconfig(systemd)
 BuildRequires:  pkgconfig(uuid)
 BuildRequires:  pkgconfig(openssl)
-BuildRequires:  pkgconfig(websocketpp)
-BuildRequires:  pkgconfig(catch2)
+BuildRequires:  cmake(yaml-cpp)
+BuildRequires:  cmake(websocketpp)
+BuildRequires:  cmake(fmt)
+BuildRequires:  cmake(Catch2)
 %ifarch %{qt5_qtwebengine_arches}
-BuildRequires:  pkgconfig(Qt5WebKit)
-BuildRequires:  pkgconfig(Qt5Location)
-BuildRequires:  pkgconfig(Qt5Sensors)
-BuildRequires:  pkgconfig(Qt5Svg)
-BuildRequires:  pkgconfig(Qt5WebEngine)
-BuildRequires:  pkgconfig(Qt5WebChannel)
-BuildRequires:  pkgconfig(Qt5XmlPatterns)
+BuildRequires:  cmake(Qt5WebKit)
+BuildRequires:  cmake(Qt5Location)
+BuildRequires:  cmake(Qt5Sensors)
+BuildRequires:  cmake(Qt5Svg)
+BuildRequires:  cmake(Qt5WebEngine)
+BuildRequires:  cmake(Qt5WebChannel)
+BuildRequires:  cmake(Qt5XmlPatterns)
 BuildRequires:  qtsingleapplication-qt5-devel
 BuildRequires:  hicolor-icon-theme
 BuildRequires:  desktop-file-utils
@@ -188,7 +188,10 @@ cp -r node_modules_dev/* src/gwt/panmirror/src/editor/node_modules
 cp %{SOURCE2} .
 
 # use system libraries when available
-rm -rf src/cpp/desktop/3rdparty src/cpp/ext/websocketpp
+rm -rf src/cpp/desktop/3rdparty src/cpp/ext/{websocketpp,fmt}
+sed -i '/fmt/d' src/cpp/ext/CMakeLists.txt
+sed -i '/target_link_libraries(rstudio-core/i find_package(fmt REQUIRED)' \
+    src/cpp/core/CMakeLists.txt
 ln -sf %{_includedir}/rapidxml.h src/cpp/core/include/core/rapidxml/rapidxml.hpp
 ln -sf %{_includedir}/websocketpp src/cpp/ext/websocketpp
 rm -rf src/cpp/tests/cpp/tests/vendor
@@ -346,6 +349,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Mon Jul 18 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.07.0+548-2
+- Unbundle fmt
+
 * Fri Jul 08 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.07.0+548-1
 - Update to 2022.07.0+548
 - Define rstudio_flags as global macro
