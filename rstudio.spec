@@ -26,9 +26,9 @@
 %global rstudio_visual_editor       panmirror-0.1.0
 %global rstudio_version_major       2022
 %global rstudio_version_minor       07
-%global rstudio_version_patch       0
-%global rstudio_version_suffix      548
-%global rstudio_git_revision_hash   34ea3031089fa4e38738a9256d6fa6d70629c822
+%global rstudio_version_patch       1
+%global rstudio_version_suffix      554
+%global rstudio_git_revision_hash   7872775ebddc40635780ca1ed238934c3345c5de
 %global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
 %global rstudio_flags \
     export RSTUDIO_VERSION_MAJOR=%{rstudio_version_major} ; \
@@ -45,7 +45,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 ExclusiveArch:  %{java_arches}
 
@@ -349,6 +349,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Tue Jul 26 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.07.1+554-1
+- Update to 2022.07.1+554
+
 * Sat Jul 23 2022 Fedora Release Engineering <releng@fedoraproject.org> - 2022.07.0+548-3
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_37_Mass_Rebuild
 
