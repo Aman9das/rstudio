@@ -45,7 +45,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        RStudio base package
 ExclusiveArch:  %{java_arches}
 
@@ -121,6 +121,7 @@ Suggests:       rstudio-desktop
 %endif
 Suggests:       rstudio-server
 Recommends:     git
+Recommends:     clang-devel
 Requires:       hunspell
 Requires:       pandoc
 Requires:       mathjax
@@ -349,6 +350,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Tue Oct 18 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.07.2+576-2
+- Add clang-devel to Recommends
+
 * Thu Sep 22 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.07.2+576-1
 - Update to 2022.07.2+576
 
