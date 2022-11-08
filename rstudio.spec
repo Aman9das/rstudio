@@ -45,7 +45,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        RStudio base package
 ExclusiveArch:  %{java_arches}
 
@@ -350,6 +350,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Tue Nov 08 2022 Richard Shaw <hobbes1069@gmail.com> - 2022.07.2+576-3
+- Rebuild for yaml-cpp 0.7.0.
+
 * Tue Oct 18 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.07.2+576-2
 - Add clang-devel to Recommends
 
