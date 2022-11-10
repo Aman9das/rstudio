@@ -2,7 +2,7 @@ Index: rstudio-2022.07.2-576/src/cpp/CMakeLists.txt
 ===================================================================
 --- rstudio-2022.07.2-576.orig/src/cpp/CMakeLists.txt
 +++ rstudio-2022.07.2-576/src/cpp/CMakeLists.txt
-@@ -218,7 +218,7 @@ else()
+@@ -218,11 +218,13 @@ else()
     find_package(yaml-cpp REQUIRED)
  endif()
  
@@ -11,3 +11,10 @@ Index: rstudio-2022.07.2-576/src/cpp/CMakeLists.txt
     message(FATAL_ERROR "yaml-cpp not found (re-run dependencies script to install)")
  endif()
  
+-include_directories(SYSTEM "${YAML_CPP_INCLUDE_DIR}")
++if(YAML_CPP_INCLUDE_DIR)
++	include_directories(SYSTEM "${YAML_CPP_INCLUDE_DIR}")
++endif()
+ 
+ # determine whether we should statically link boost. we always do this
+ # unless we are building a non-packaged build on linux (in which case
