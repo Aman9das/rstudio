@@ -2,13 +2,15 @@ Index: rstudio-2022.07.2-576/src/cpp/CMakeLists.txt
 ===================================================================
 --- rstudio-2022.07.2-576.orig/src/cpp/CMakeLists.txt
 +++ rstudio-2022.07.2-576/src/cpp/CMakeLists.txt
-@@ -218,11 +218,13 @@ else()
+@@ -218,11 +218,14 @@ else()
     find_package(yaml-cpp REQUIRED)
  endif()
  
 -if(NOT EXISTS "${YAML_CPP_INCLUDE_DIR}")
-+if(NOT yaml-cpp_FOUND)
-    message(FATAL_ERROR "yaml-cpp not found (re-run dependencies script to install)")
+-   message(FATAL_ERROR "yaml-cpp not found (re-run dependencies script to install)")
++if(yaml-cpp_FOUND AND NOT YAML_CPP_LIBRARIES)
++   # Assume yaml was found by config instead by module.
++   set(YAML_CPP_LIBRARIES yaml-cpp)
  endif()
  
 -include_directories(SYSTEM "${YAML_CPP_INCLUDE_DIR}")
