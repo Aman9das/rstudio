@@ -1,0 +1,13 @@
+Index: rstudio-2022.07.2-576/src/cpp/CMakeLists.txt
+===================================================================
+--- rstudio-2022.07.2-576.orig/src/cpp/CMakeLists.txt
++++ rstudio-2022.07.2-576/src/cpp/CMakeLists.txt
+@@ -218,7 +218,7 @@ else()
+    find_package(yaml-cpp REQUIRED)
+ endif()
+ 
+-if(NOT EXISTS "${YAML_CPP_INCLUDE_DIR}")
++if(NOT YAML_CPP_INCLUDE_DIR)
+    message(FATAL_ERROR "yaml-cpp not found (re-run dependencies script to install)")
+ endif()
+ 

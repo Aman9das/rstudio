@@ -87,6 +87,8 @@ Patch5:         0005-disable-quarto.patch
 Patch6:         0006-do-not-disable-seccomp-filter-sandbox.patch
 # https://github.com/rstudio/rstudio/pull/11585
 Patch7:         0007-depend-on-Java-source-files-only.patch
+# https://github.com/rstudio/rstudio/issues/12317
+Patch8:         rstudio-yaml-cpp.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-11-openjdk-devel, R-core-devel
