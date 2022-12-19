@@ -25,10 +25,10 @@
 %global mathjax_short               27
 %global rstudio_visual_editor       panmirror-0.1.0
 %global rstudio_version_major       2022
-%global rstudio_version_minor       07
-%global rstudio_version_patch       2
-%global rstudio_version_suffix      576
-%global rstudio_git_revision_hash   e7373ef832b49b2a9b88162cfe7eac5f22c40b34
+%global rstudio_version_minor       12
+%global rstudio_version_patch       0
+%global rstudio_version_suffix      353
+%global rstudio_git_revision_hash   7d165dcfc1b6d300eb247738db2c7076234f6ef0
 %global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
 %global rstudio_flags \
     export RSTUDIO_VERSION_MAJOR=%{rstudio_version_major} ; \
@@ -45,7 +45,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        3%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 ExclusiveArch:  %{java_arches}
 
@@ -85,10 +85,8 @@ Patch5:         0005-disable-quarto.patch
 # https://github.com/rstudio/rstudio/issues/9854
 # We don't need this with our version of QtWebEngine
 Patch6:         0006-do-not-disable-seccomp-filter-sandbox.patch
-# https://github.com/rstudio/rstudio/pull/11585
-Patch7:         0007-depend-on-Java-source-files-only.patch
 # https://github.com/rstudio/rstudio/issues/12317
-Patch8:         rstudio-yaml-cpp.patch
+Patch7:         0007-rstudio-yaml-cpp.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-11-openjdk-devel, R-core-devel
@@ -206,6 +204,7 @@ ln -sf %{_includedir}/catch2 src/cpp/tests/cpp/tests/vendor
 %ifarch %{qt5_qtwebengine_arches}
     -DRSTUDIO_TARGET=Desktop \
     -DRSTUDIO_DESKTOP=TRUE \
+    -DQUARTO_ENABLED=FALSE \
     -DQT_QMAKE_EXECUTABLE=%{_bindir}/qmake-qt5 \
 %else
     -DRSTUDIO_TARGET=Server \
@@ -345,6 +344,7 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %{_libexecdir}/%{name}/bin/crash-handler-proxy
 %{_libexecdir}/%{name}/bin/rserver
 %{_libexecdir}/%{name}/bin/rserver-pam
+%{_libexecdir}/%{name}/bin/rserver-url
 %{_libexecdir}/%{name}/bin/%{name}-server
 %{_libexecdir}/%{name}/db
 %dir %{_sharedstatedir}/%{name}-server
@@ -352,6 +352,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Sun Dec 18 2022 Iñaki Úcar <iucar@fedoraproject.org> - 2022.12.0+353-1
+- Update to 2022.12.0+353
+
 * Tue Nov 08 2022 Richard Shaw <hobbes1069@gmail.com> - 2022.07.2+576-3
 - Rebuild for yaml-cpp 0.7.0.
 
