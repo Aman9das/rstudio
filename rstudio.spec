@@ -88,7 +88,7 @@ Patch6:         0006-do-not-disable-seccomp-filter-sandbox.patch
 # https://github.com/rstudio/rstudio/issues/12317
 Patch7:         0007-rstudio-yaml-cpp.patch
 # need to submit upstream
-Patch8:         0008-add-cstdint-header.patch
+Patch8:         0008-add-missing-headers.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-11-openjdk-devel, R-core-devel
@@ -356,7 +356,7 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %changelog
 * Thu Feb 23 2023 Iñaki Úcar <iucar@fedoraproject.org> - 2022.12.0+353-3
 - Update license to meet SPDX specification
-- Add patch to fix missing cstdint header issue
+- Add patch to fix missing headers
 
 * Fri Jan 20 2023 Fedora Release Engineering <releng@fedoraproject.org> - 2022.12.0+353-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_38_Mass_Rebuild

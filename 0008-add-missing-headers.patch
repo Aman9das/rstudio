@@ -1,0 +1,37 @@
+From 76a4026765fc12a608d67a2846eb4a47332c70f3 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?I=C3=B1aki=20=C3=9Acar?= <iucar@fedoraproject.org>
+Date: Thu, 23 Feb 2023 10:46:04 +0100
+Subject: [PATCH] add missing headers
+
+---
+ src/cpp/core/include/core/Thread.hpp                      | 1 +
+ src/cpp/shared_core/include/shared_core/system/Crypto.hpp | 1 +
+ 2 files changed, 2 insertions(+)
+
+diff --git a/src/cpp/core/include/core/Thread.hpp b/src/cpp/core/include/core/Thread.hpp
+index 9ca7f33..df3a0ad 100644
+--- a/src/cpp/core/include/core/Thread.hpp
++++ b/src/cpp/core/include/core/Thread.hpp
+@@ -17,6 +17,7 @@
+ #define CORE_THREAD_HPP
+ 
+ #include <queue>
++#include <set>
+ 
+ #include <boost/utility.hpp>
+ #include <boost/function.hpp>
+diff --git a/src/cpp/shared_core/include/shared_core/system/Crypto.hpp b/src/cpp/shared_core/include/shared_core/system/Crypto.hpp
+index ccd8b62..1f7ad2b 100644
+--- a/src/cpp/shared_core/include/shared_core/system/Crypto.hpp
++++ b/src/cpp/shared_core/include/shared_core/system/Crypto.hpp
+@@ -32,6 +32,7 @@
+ 
+ #include <string>
+ #include <vector>
++#include <cstdint>
+ 
+ namespace rstudio {
+ namespace core {
+-- 
+2.39.1
+
