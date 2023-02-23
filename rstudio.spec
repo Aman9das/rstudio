@@ -45,7 +45,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        2%{?dist}
+Release:        3%{?dist}
 Summary:        RStudio base package
 ExclusiveArch:  %{java_arches}
 
@@ -64,7 +64,7 @@ ExclusiveArch:  %{java_arches}
 # CPL:          JUnit
 # CC-BY:        a few icomoon glyphs
 # Public:       aopalliance
-License:        AGPLv3 and LGPLv2+ and ASL 2.0 and MIT and BSD and ISC and W3C and MPLv1.1 and CPL and CC-BY and Public Domain
+License:        AGPL-3.0-only AND LGPL-2.1-or-later AND Apache-2.0 AND MIT AND BSD-3-Clause AND ISC AND W3C AND MPL-1.1 AND CPL-1.0 AND CC-BY-SA-4.0 AND LicenseRef-Fedora-Public-Domain
 URL:            https://github.com/%{name}/%{name}
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
 # Node dependencies to build visual editor (use nodejs-bundler.sh)
@@ -87,6 +87,8 @@ Patch5:         0005-disable-quarto.patch
 Patch6:         0006-do-not-disable-seccomp-filter-sandbox.patch
 # https://github.com/rstudio/rstudio/issues/12317
 Patch7:         0007-rstudio-yaml-cpp.patch
+# need to submit upstream
+Patch8:         0008-add-cstdint-header.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-11-openjdk-devel, R-core-devel
@@ -352,6 +354,10 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Thu Feb 23 2023 Iñaki Úcar <iucar@fedoraproject.org> - 2022.12.0+353-3
+- Update license to meet SPDX specification
+- Add patch to fix missing cstdint header issue
+
 * Fri Jan 20 2023 Fedora Release Engineering <releng@fedoraproject.org> - 2022.12.0+353-2
 - Rebuilt for https://fedoraproject.org/wiki/Fedora_38_Mass_Rebuild
 
