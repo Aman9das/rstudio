@@ -45,7 +45,7 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        3%{?dist}
+Release:        4%{?dist}
 Summary:        RStudio base package
 ExclusiveArch:  %{java_arches}
 
@@ -354,6 +354,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Thu Feb 23 2023 Kalev Lember <klember@redhat.com> - 2022.12.0+353-4
+- Rebuilt for Boost 1.81
+
 * Thu Feb 23 2023 Iñaki Úcar <iucar@fedoraproject.org> - 2022.12.0+353-3
 - Update license to meet SPDX specification
 - Add patch to fix missing headers
