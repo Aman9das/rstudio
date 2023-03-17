@@ -1,0 +1,54 @@
+From f6884c72d87cba22a5960a464c82c347952a68ce Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?I=C3=B1aki=20=C3=9Acar?= <iucar@fedoraproject.org>
+Date: Fri, 17 Mar 2023 14:13:32 +0100
+Subject: [PATCH] cleanup
+
+---
+ apps/panmirror/package.json |  1 +
+ package.json                | 20 ++------------------
+ 2 files changed, 3 insertions(+), 18 deletions(-)
+
+diff --git a/apps/panmirror/package.json b/apps/panmirror/package.json
+index ae1749d..b3d24d6 100644
+--- a/apps/panmirror/package.json
++++ b/apps/panmirror/package.json
+@@ -20,6 +20,7 @@
+     "editor": "*"
+   },
+   "devDependencies": {
++    "vite": "^4.2.0",
+     "eslint": "^7.32.0",
+     "eslint-config-custom": "*",
+     "tsconfig": "*",
+diff --git a/package.json b/package.json
+index 5321ac4..dd80a63 100644
+--- a/package.json
++++ b/package.json
+@@ -2,22 +2,6 @@
+   "private": true,
+   "workspaces": [
+     "apps/*",
+-    "packages/*",
+-    "packages/ojs/*"
+-  ],
+-  "scripts": {
+-    "build": "turbo run build",
+-    "dev-writer": "turbo run dev --filter writer*",
+-    "dev-vscode": "turbo run dev --filter quarto...",
+-    "lint": "turbo run lint",
+-    "format": "prettier --write \"**/*.{ts,tsx}\"",
+-    "watch": "concurrently 'tsc --watch --noEmit --project apps/writer/tsconfig.json' 'tsc --watch --noEmit  --project packages/writer-server/tsconfig.json'"
+-  },
+-  "devDependencies": {
+-    "concurrently": "^7.5.0",
+-    "eslint": "^7.32.0",
+-    "eslint-config-custom": "*",
+-    "prettier": "^2.5.1",
+-    "turbo": "latest"
+-  }
++    "packages/*"
++  ]
+ }
+-- 
+2.39.2
+

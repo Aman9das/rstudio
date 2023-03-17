@@ -23,13 +23,14 @@
 %global bundled_inertpol_version    0.2.5
 %global bundled_focusvis_version    5.0.2
 %global mathjax_short               27
-%global rstudio_visual_editor       panmirror-0.1.0
-%global rstudio_version_major       2022
-%global rstudio_version_minor       12
+%global rstudio_visual_editor       panmirror-0.0.0
+%global rstudio_version_major       2023
+%global rstudio_version_minor       03
 %global rstudio_version_patch       0
-%global rstudio_version_suffix      353
-%global rstudio_git_revision_hash   7d165dcfc1b6d300eb247738db2c7076234f6ef0
+%global rstudio_version_suffix      386
+%global rstudio_git_revision_hash   3c53477afb13ab959aeb5b34df1f10c237b256c3
 %global rstudio_version             %{rstudio_version_major}.%{rstudio_version_minor}.%{rstudio_version_patch}
+%global rstudio_codename            cherry-blossom
 %global rstudio_flags \
     export RSTUDIO_VERSION_MAJOR=%{rstudio_version_major} ; \
     export RSTUDIO_VERSION_MINOR=%{rstudio_version_minor} ; \
@@ -45,28 +46,17 @@
 
 Name:           rstudio
 Version:        %{rstudio_version}+%{rstudio_version_suffix}
-Release:        4%{?dist}
+Release:        1%{?dist}
 Summary:        RStudio base package
 ExclusiveArch:  %{java_arches}
 
-# AGPLv3:       RStudio, hunspell, tree.hh
-# LGPLv2+:      Stan Ace Mode
-# ASL 2.0:      gwt, gwt-websockets, gin, guice, pdf.js, fast-text-encoding
-# ASL 2.0:      inert-polyfill.js, elemental2
-# MIT:          synctex, datatables, jquery, reveal.js, qunit.js, core-js
-# MIT:          xterm.js, guidelines-support-library-lite, JSCustomBadge
-# MIT:          ansi-regex, gsl-lite, ProseMirror, CodeMirror, OrderedMap
-# MIT:          Clipboard.js, tlite
-# BSD:          jsbn, ace, highlight.js
-# ISC:          sundown
-# W3C:          focus-visible.js
-# MPLv1.1:      rhino
-# CPL:          JUnit
-# CC-BY:        a few icomoon glyphs
-# Public:       aopalliance
+# See NOTICE file
 License:        AGPL-3.0-only AND LGPL-2.1-or-later AND Apache-2.0 AND MIT AND BSD-3-Clause AND ISC AND W3C AND MPL-1.1 AND CPL-1.0 AND CC-BY-SA-4.0 AND LicenseRef-Fedora-Public-Domain
 URL:            https://github.com/%{name}/%{name}
 Source0:        %{url}/archive/v%{version}/%{name}-%{version}.tar.gz
+Source4:        https://github.com/quarto-dev/quarto/archive/refs/heads/release/%{name}-%{rstudio_codename}.tar.gz
+Source5:        panmirror-cleanup.sh
+Source6:        panmirror-cleanup.patch
 # Node dependencies to build visual editor (use nodejs-bundler.sh)
 Source1:        %{rstudio_visual_editor}-nm.tgz
 Source2:        %{rstudio_visual_editor}-bundled-licenses.txt
@@ -87,12 +77,10 @@ Patch5:         0005-disable-quarto.patch
 Patch6:         0006-do-not-disable-seccomp-filter-sandbox.patch
 # https://github.com/rstudio/rstudio/issues/12317
 Patch7:         0007-rstudio-yaml-cpp.patch
-# need to submit upstream
-Patch8:         0008-add-missing-headers.patch
 
 BuildRequires:  make, cmake, ant
 BuildRequires:  gcc-c++, java-11-openjdk-devel, R-core-devel
-BuildRequires:  nodejs-devel
+BuildRequires:  yarnpkg, golang-github-evanw-esbuild
 BuildRequires:  pandoc
 BuildRequires:  mathjax
 BuildRequires:  lato-fonts, glyphography-newscycle-fonts
@@ -184,10 +172,18 @@ This package provides the Server version, a browser-based interface to the RStud
 
 %prep
 %autosetup -p1 -n %{name}-%{rstudio_version}-%{rstudio_version_suffix}
-tar -xf %{SOURCE1}
-mkdir src/gwt/panmirror/src/editor/node_modules
-cp -r node_modules_prod/* src/gwt/panmirror/src/editor/node_modules
-cp -r node_modules_dev/* src/gwt/panmirror/src/editor/node_modules
+tar -xf %{SOURCE4}
+mv quarto-release-%{name}-%{rstudio_codename} src/gwt/lib/quarto
+pushd src/gwt/lib/quarto
+    %{SOURCE5} . %{SOURCE6}
+    tar -xf %{SOURCE1}
+    mv node_modules_dev node_modules
+    (cd apps/panmirror && ln -s ../../node_modules .)
+    for arch in x64 arm64 ppc64 s390x; do
+        mkdir -p node_modules/@esbuild/linux-$arch/bin
+        ln -s %{_bindir}/esbuild node_modules/@esbuild/linux-$arch/bin
+    done
+popd
 cp %{SOURCE2} .
 
 # use system libraries when available
@@ -354,6 +350,9 @@ chown -R %{name}-server:%{name}-server %{_sharedstatedir}/%{name}-server
 %config(noreplace) %{_sysconfdir}/pam.d/%{name}
 
 %changelog
+* Fri Mar 17 2023 Iñaki Úcar <iucar@fedoraproject.org> - 2023.03.0+386-1
+- Update to 2023.03.0+386
+
 * Thu Feb 23 2023 Kalev Lember <klember@redhat.com> - 2022.12.0+353-4
 - Rebuilt for Boost 1.81
 

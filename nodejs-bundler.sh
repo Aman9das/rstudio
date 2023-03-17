@@ -34,22 +34,32 @@ else
 fi
 
 download_deps () {
-  pushd ${PACKAGE}
+  PACKAGE_DIR=$(tar tf $PACKAGE | head -n1)
+  tar xf $PACKAGE
+  ./panmirror-cleanup.sh $PACKAGE_DIR panmirror-cleanup.patch
+
+  APP=apps/panmirror
+  NAME=$(jq -r .name ${PACKAGE_DIR}/$APP/package.json)
+  VERSION=$(jq -r .version ${PACKAGE_DIR}/$APP/package.json)
+
+  pushd ${PACKAGE_DIR}
     echo " Downloading $1 dependencies..."
-    npm install --no-optional --only=$1
+    [ "$1" = "prod" ] && YARN_FLAG="--prod" || YARN_FLAG=""
+    yarn install --ignore-optional $YARN_FLAG
     status=$?
   popd
 
   if [ ${status} -ge 1 ] ; then
     echo "    ERROR WILL ROBINSON"
-    rm -rf ${PACKAGE}/node_modules
+    rm -rf ${PACKAGE_DIR}
     exit 1
   fi
-  mv ${PACKAGE}/node_modules node_modules_$1
-}
 
-NAME=$(jq -r .name ${PACKAGE}/package.json)
-VERSION=$(jq -r .version ${PACKAGE}/package.json)
+  rm -rf ${PACKAGE_DIR}/node_modules/esbuild-linux*
+  rm -rf ${PACKAGE_DIR}/node_modules/vite/node_modules
+  mv ${PACKAGE_DIR}/node_modules node_modules_$1
+  rm -rf ${PACKAGE_DIR}
+}
 
 download_deps prod
 
