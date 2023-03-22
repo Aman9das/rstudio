@@ -70,8 +70,8 @@ Patch2:         0002-fix-rstudio-exec-path.patch
 Patch3:         0003-fix-resources-path.patch
 # Use system-provided nodejs binary
 Patch4:         0004-use-system-node.patch
-# Disable quarto, stick to pandoc
-Patch5:         0005-disable-quarto.patch
+# # Disable quarto, stick to pandoc
+# Patch5:         0005-disable-quarto.patch
 # https://github.com/rstudio/rstudio/issues/9854
 # We don't need this with our version of QtWebEngine
 Patch6:         0006-do-not-disable-seccomp-filter-sandbox.patch
@@ -202,7 +202,7 @@ ln -sf %{_includedir}/catch2 src/cpp/tests/cpp/tests/vendor
 %ifarch %{qt5_qtwebengine_arches}
     -DRSTUDIO_TARGET=Desktop \
     -DRSTUDIO_DESKTOP=TRUE \
-    -DQUARTO_ENABLED=FALSE \
+    # -DQUARTO_ENABLED=FALSE \
     -DQT_QMAKE_EXECUTABLE=%{_bindir}/qmake-qt5 \
 %else
     -DRSTUDIO_TARGET=Server \
